@@ -13,11 +13,12 @@ var lines: Dictionary = {}
 func _ready() -> void:
 	Solver = mod_AStar2D.new()
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.5).timeout
 	
 	var n1: int = add_node(Vector2.ZERO, SOLAR, 1.0)
 	var n2: int = add_node(Vector2.ZERO, RESIDENTIAL, 1.0)
-	var l1: String = connect_nodes(n1, n2, 1.0)
+	var l1: String = connect_nodes(n1, n2, 0.5)
+	Solver.solve()
 
 func add_node(pos: Vector2, type: int, weight: float = 1.0) -> int:
 	# Creamos el id del nuevo nodo
@@ -41,6 +42,9 @@ func add_node(pos: Vector2, type: int, weight: float = 1.0) -> int:
 
 
 func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
+	# Checkeamos que los nodos no están conectados
+	if Solver.are_points_connected(id_a, id_b):
+		return "Nodes already connected"
 	# Obtenemos el id de la linea, añadiendola al Solver
 	var new_line_id = Solver.add_line(id_a, id_b, capacity)
 	# Creamos la instancia de la línea, y la añadimos al diccionario de líneas

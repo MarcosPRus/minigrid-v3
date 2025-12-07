@@ -59,7 +59,7 @@ func add_consumer(pos: Vector2i) -> int:
 	# Añadimos el nodo real
 	G.add_point(next_id, pos, 1.0)
 	# Lo conectamos al nodo SC
-	add_line(next_id, SC, 0) # Capacidad inicial nula
+	add_line(next_id, SC, 1.0) # Capacidad inicial nula
 	
 	next_id += 1
 	return next_id-1
@@ -78,7 +78,7 @@ func add_generator(pos: Vector2i, weight: float) -> int:
 	G.add_point(next_id+1, pos, 1.0)
 	# Los conectamos entre ellos y al nodo SS
 	add_line(next_id, next_id+1, INF) # Nodo real - Nodo virtual (Capacidad infinita)
-	add_line(next_id+1, SS, 0) # Nodo virtual - SS (Capacidad inicial nula)
+	add_line(next_id+1, SS, 1.0) # Nodo virtual - SS (Capacidad inicial nula)
 	
 	next_id += 2
 	return next_id-2
@@ -90,7 +90,7 @@ func add_generator(pos: Vector2i, weight: float) -> int:
 # id_b = Id of the second node (the order doesn't matter)
 # cap = capacity of the connection
 func add_line(id_a: int, id_b: int, cap: float) -> String:
-	# Asumimos que la conexión no existe, TODO: la lógica de detección de líneas duplicadas
+	# Asumimos que la conexión no existe, la lógica de detección de líneas duplicadas
 	# la implementa el AlgorithmManager a más alto nivel
 	G.connect_points(id_a, id_b, true)
 	# Y añadimos esta línea al diccionario de capacidades
@@ -102,3 +102,30 @@ func add_line(id_a: int, id_b: int, cap: float) -> String:
 
 func solve() -> void:
 	copy_G_into_G_copy()
+	Caps_copy = Caps.duplicate()
+	
+	var next_path = G_copy.get_id_path(SS, SC)
+	
+	#while next_path:
+	print("[Mod A* Debug] Shortest path found: ", next_path)
+	# Llamamos a la función que busqua en un "path", la capacidad mínima o cuello de botella
+	var bottleneck_cap = get_bottleneck_capacity(next_path)
+	print("[Mod A* Debug] Bottleneck line capacity is: ", bottleneck_cap)
+	# Llamamos a la función que reduce las capacidades de las líneas en la copia del 
+
+
+func get_bottleneck_capacity(path: PackedInt64Array) -> float:
+	var min_cap := INF
+	var curr_cap := 0.0
+	
+	for i in range(path.size() - 1):
+		var line_id_1 = str(path[i]) + "-" + str(path[i+1])
+		var line_id_2 = str(path[i+1]) + "-" + str(path[i])
+		# Con get(), intentamos conseguir la capacidad de a-b. Si esa key no existe, intentamos 
+		# obtener la capacidad de b-a. Si tampoco existe, recibimos "null"
+		curr_cap = Caps_copy.get(line_id_1, Caps_copy.get(line_id_2, null))
+		if curr_cap < min_cap:
+			min_cap = curr_cap
+	
+	return min_cap
+		
