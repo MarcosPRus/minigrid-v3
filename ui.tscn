@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=3 uid="uid://obvu4e5vhhgp"]
+
+[ext_resource type="Script" uid="uid://byy3w2y4wb63t" path="res://ui.gd" id="1_fyqef"]
+[ext_resource type="Texture2D" uid="uid://dn80bckgxdstu" path="res://Assets/spritesheet.png" id="2_m6e0p"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fyqef")
+
+[node name="PreviewSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_m6e0p")
+hframes = 10
+
+[node name="PreviewLine" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 0, 0)
+width = 4.0
+default_color = Color(0, 1, 1, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ButtonSolar" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Solar"
+
+[node name="ButtonCoal" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Coal"
+
+[node name="ButtonCity" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "City"
+
+[connection signal="pressed" from="HBoxContainer/ButtonSolar" to="." method="_on_button_solar_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonCoal" to="." method="_on_button_coal_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonCity" to="." method="_on_button_city_pressed"]

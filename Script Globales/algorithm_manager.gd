@@ -3,8 +3,8 @@ extends Node2D
 enum {SS, SC}
 enum {VIRTUAL, SOLAR, WIND, HYDRO, NUCLEAR, GAS, COAL, INDUSTRIAL, COMMERCIAL, RESIDENTIAL}
 
-var NodesContainer: Node2D # TODO: El contenedor de nodos tiene que asignarse a sí mismo a esta variable
-var LinesContainer: Node2D # TODO: El contenedor de líneas tiene que asignarse a sí mismo a esta variable
+var NodesContainer: Node2D
+var LinesContainer: Node2D
 var Solver: mod_AStar2D
 
 var nodes: Dictionary = {}
@@ -15,17 +15,18 @@ func _ready() -> void:
 	Solver = mod_AStar2D.new()
 	await get_tree().create_timer(0.5).timeout
 	# Añadimos los nodos SS y SC lo primero
-	var SS = add_node(Vector2(100, 500), VIRTUAL, "SS",1.0) # ID 0 por ser el primero
-	var SC = add_node(Vector2(1100, 500), VIRTUAL, "SC", 1.0) # ID 1 por ser el segundo
+	var SS = add_node(Vector2(-1000, -1000), VIRTUAL, "SS", 1.0) # ID 0 por ser el primero
+	var SC = add_node(Vector2(-1000, -1000), VIRTUAL, "SC", 1.0) # ID 1 por ser el segundo
 	assert(SS == 0 and SC == 1, "SS and SC IDs are incorrect!")
 	
 	
-	var n1: int = add_node(Vector2(500, 300), SOLAR, "Solar", 1.0)
-	var n2: int = add_node(Vector2(700, 500), RESIDENTIAL, "City", 1.0)
-	var n3: int = add_node(Vector2(500, 700), COAL, "Coal", 1.0)
-	var l1: String = connect_nodes(n1, n2, 1.0)
-	var l2: String = connect_nodes(n2, n3, 1.0)
-	Solver.solve()
+	#var n1: int = add_node(Vector2(500, 300), SOLAR, "Solar", 1.0)
+	#var n2: int = add_node(Vector2(700, 500), RESIDENTIAL, "City", 1.0)
+	#var n3: int = add_node(Vector2(500, 700), COAL, "Coal", 1.0)
+	#var l1: String = connect_nodes(n1, n2, 1.0)
+	#var l2: String = connect_nodes(n2, n3, 1.0)
+	#Solver.solve()
+
 
 func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int:
 	# Creamos el id del nuevo nodo
@@ -51,7 +52,9 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 		save_node(new_node_id, pos, type, name_)
 		connect_nodes(SC, new_node_id, 1.0) # Demanda 1 por defecto (Demanda)
 	
+	update_grid()
 	return new_node_id
+
 
 func save_node(new_node_id: int, pos: Vector2, type: int, name_:String) -> void:
 	# Creamos la instancia del nodo, y la añadimos al diccionario de nodos
@@ -85,7 +88,12 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	lines[new_line_id] = new_line
 	
 	print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
+	update_grid()
 	return new_line_id
+
+
+func update_grid() -> void:
+	Solver.solve()
 
 
 func new_grid_state(final_flows: Dictionary) -> void:
