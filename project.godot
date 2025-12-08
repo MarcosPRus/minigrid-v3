@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 AlgorithmManager="*res://algorithm_manager.gd"
 
+[display]
+
+window/stretch/aspect="expand"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

@@ -1,25 +1,22 @@
 class_name mod_AStar2D
 extends AStar2D
 
-const SS: int = 0
-const SC: int = 1
+enum {SS, SC}
 
 var G: AStar2D
 var G_copy: AStar2D
 
 var Caps: Dictionary = {}
 var Caps_copy: Dictionary = {}
+var final_flows: Dictionary = {}
 
 var min_cap
-var next_id: int = 2
+var next_id: int = 0
 
 func _init() -> void:
 	# Create the default A* instances
 	G = AStar2D.new()
 	G_copy = AStar2D.new()
-	# Add the SS and SC nodes
-	G.add_point(SS, Vector2(-1000, -1000), 1.0) # Super Source
-	G.add_point(SC, Vector2(-1000, -1000), 1.0) # Super Consumer
 	
 	print("[Mod A* Debug] G created: \t", G)
 	#print("[Mod A* Debug] G has ", G.get_point_count(), " nodes")
@@ -49,6 +46,20 @@ func copy_G_into_G_copy() -> void:
 			if not G_copy.are_points_connected(id, target_id):
 				G_copy.connect_points(id, target_id, true)
 
+## Function used by the Algorithm Manager to add consumers to the graph
+func add_node(pos: Vector2, weight: float) -> int:
+	G.add_point(next_id, pos, weight)
+	
+	next_id += 1
+	return next_id-1
+
+
+#region Old functions
+func add_virtual(pos: Vector2i, weight: float) -> int:
+	G.add_point(next_id, pos, weight)
+	next_id += 1
+	return next_id-1
+	
 
 ## Function used by the Algorithm Manager to add consumers to the graph
 # pos = Vector de posición 2D
@@ -58,8 +69,8 @@ func add_consumer(pos: Vector2i) -> int:
 	# Una vez añadido el nodo, tenemos que recalcular la red, por lo que reseteamos G_copy
 	# Añadimos el nodo real
 	G.add_point(next_id, pos, 1.0)
-	# Lo conectamos al nodo SC
-	add_line(next_id, SC, 1.0) # Capacidad inicial nula
+	# Lo conectamos al nodo SC. Siempre el nodo SS o SC primero, para tener ids de líneas consistentes
+	add_line(SC, next_id, 1.0) # Capacidad inicial
 	
 	next_id += 1
 	return next_id-1
@@ -78,10 +89,11 @@ func add_generator(pos: Vector2i, weight: float) -> int:
 	G.add_point(next_id+1, pos, 1.0)
 	# Los conectamos entre ellos y al nodo SS
 	add_line(next_id, next_id+1, INF) # Nodo real - Nodo virtual (Capacidad infinita)
-	add_line(next_id+1, SS, 1.0) # Nodo virtual - SS (Capacidad inicial nula)
+	add_line(SS, next_id+1, 1.0) # SS - Nodo virtual (Capacidad inicial)
 	
 	next_id += 2
 	return next_id-2
+#endregion
 
 
 ## Function used by the Algorithm Manager to add lines to the graph
@@ -106,12 +118,23 @@ func solve() -> void:
 	
 	var next_path = G_copy.get_id_path(SS, SC)
 	
-	#while next_path:
-	print("[Mod A* Debug] Shortest path found: ", next_path)
-	# Llamamos a la función que busqua en un "path", la capacidad mínima o cuello de botella
-	var bottleneck_cap = get_bottleneck_capacity(next_path)
-	print("[Mod A* Debug] Bottleneck line capacity is: ", bottleneck_cap)
-	# Llamamos a la función que reduce las capacidades de las líneas en la copia del 
+	while next_path:
+		print("[Mod A* Debug] Shortest path found: ", next_path)
+		# Llamamos a la función que busqua en un "path", la capacidad mínima o cuello de botella
+		var bottleneck_cap = get_bottleneck_capacity(next_path)
+		print("[Mod A* Debug] Bottleneck line capacity is: ", bottleneck_cap)
+		# Llamamos a la función que reduce las capacidades de las líneas en la copia del
+		reduce_capacity_along_path(next_path, bottleneck_cap)
+		# Volvemos a buscar el camino más corto en G_copy
+		next_path = G_copy.get_id_path(SS, SC)
+	
+	print("[Mod A* Debug] No path found!")
+	
+	# Notificamos al Algorithm Manager para que éste notifique a los nodos y líneas individuales que hay 
+	# un nuevo estado de la red
+	for line in Caps.keys():
+		final_flows[line] = Caps[line] - Caps_copy[line]
+	AlgorithmManager.new_grid_state(final_flows)
 
 
 func get_bottleneck_capacity(path: PackedInt64Array) -> float:
@@ -128,4 +151,23 @@ func get_bottleneck_capacity(path: PackedInt64Array) -> float:
 			min_cap = curr_cap
 	
 	return min_cap
+
+
+func reduce_capacity_along_path(path: PackedInt64Array, cap: float) -> void:
+	for i in range(path.size() - 1):
+		var line_id_1 = str(path[i]) + "-" + str(path[i+1])
+		var line_id_2 = str(path[i+1]) + "-" + str(path[i])
+		# TODO: Tiene que haber una mejor forma de hacer esto
+		if Caps_copy.has(line_id_1):
+			Caps_copy[line_id_1] -= cap
+			print("[Mod A* Debug] Capacity along ", str(path[i]), "-", str(path[i+1]), " reduced by ", str(cap))
+			if Caps_copy[line_id_1] <= 0:
+				G_copy.disconnect_points(path[i], path[i+1])
+				print("[Mod A* Debug] Segment ", str(path[i]), "-", str(path[i+1]), " removed ")
 		
+		elif Caps_copy.has(line_id_2):
+			Caps_copy[line_id_2] -= cap
+			print("[Mod A* Debug] Capacity along ", str(path[i]), "-", str(path[i+1]), " reduced by ", str(cap))
+			if Caps_copy[line_id_2] <= 0:
+				G_copy.disconnect_points(path[i], path[i+1])
+				print("[Mod A* Debug] Segment ", str(path[i]), "-", str(path[i+1]), " removed ")
