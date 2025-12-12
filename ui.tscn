@@ -1,7 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://obvu4e5vhhgp"]
+[gd_scene load_steps=6 format=3 uid="uid://obvu4e5vhhgp"]
 
 [ext_resource type="Script" uid="uid://byy3w2y4wb63t" path="res://ui.gd" id="1_fyqef"]
 [ext_resource type="Texture2D" uid="uid://dn80bckgxdstu" path="res://Assets/spritesheet.png" id="2_m6e0p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6e0p"]
+atlas = ExtResource("2_m6e0p")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_27fn8"]
+atlas = ExtResource("2_m6e0p")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nltto"]
+atlas = ExtResource("2_m6e0p")
+region = Rect2(576, 0, 64, 64)
 
 [node name="UI" type="Control"]
 layout_mode = 3
@@ -29,14 +41,17 @@ offset_bottom = 40.0
 [node name="ButtonSolar" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "Solar"
+icon = SubResource("AtlasTexture_m6e0p")
 
 [node name="ButtonCoal" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "Coal"
+icon = SubResource("AtlasTexture_27fn8")
 
 [node name="ButtonCity" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "City"
+icon = SubResource("AtlasTexture_nltto")
 
 [connection signal="pressed" from="HBoxContainer/ButtonSolar" to="." method="_on_button_solar_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonCoal" to="." method="_on_button_coal_pressed"]

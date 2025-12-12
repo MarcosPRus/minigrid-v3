@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgubvejra12s4"]
+
+[ext_resource type="Script" uid="uid://caufwmn8fxjcu" path="res://game_coordinator.gd" id="1_0ucd3"]
+
+[node name="GameCoordinator" type="Node2D"]
+script = ExtResource("1_0ucd3")

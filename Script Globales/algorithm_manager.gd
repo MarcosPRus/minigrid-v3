@@ -51,8 +51,7 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 		# Lo conectamos al SC
 		save_node(new_node_id, pos, type, name_)
 		connect_nodes(SC, new_node_id, 1.0) # Demanda 1 por defecto (Demanda)
-	
-	update_grid()
+
 	return new_node_id
 
 
@@ -88,7 +87,6 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	lines[new_line_id] = new_line
 	
 	print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
-	update_grid()
 	return new_line_id
 
 

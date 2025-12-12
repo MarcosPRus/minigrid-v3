@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 AlgorithmManager="*res://Script Globales/algorithm_manager.gd"
 BuildingManager="*res://Script Globales/building_manager.gd"
+GameCoordinator="*res://Script Globales/game_coordinator.gd"
 
 [display]
 
