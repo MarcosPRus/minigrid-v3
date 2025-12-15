@@ -34,3 +34,7 @@ func _on_button_city_pressed() -> void:
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
 #endregion
+
+
+func _on_button_simulate_pressed() -> void:
+	AlgorithmManager.update_grid()

@@ -2,6 +2,10 @@ extends Node2D
 
 enum states {IDLE, NODE_PREVIEW, LINE_PREVIEW}
 
+## Array de pesos para cada tipo de nodo
+#                      VIRT    SOLAR  WIND   HYDRO NUCLEAR  GAS   COAL   IND   COMM  RES
+var weights: Array = [100.000, 1.000, 1.003, 1.005, 1.008, 1.020, 1.025, 1.00, 1.00, 1.00]
+
 var UI: Control
 var state: int = states.IDLE
 
@@ -24,9 +28,8 @@ func button_pressed(type: int) -> void:
 
 func left_click(pos: Vector2) -> void:
 	if state == states.NODE_PREVIEW:
-		AlgorithmManager.add_node(pos, previewing_type, city_names.pick_random(), 1.0)
-	
-	
+		AlgorithmManager.add_node(pos, previewing_type, city_names.pick_random(), weights[previewing_type])
+
 func right_click() -> void:
 	idle()
 

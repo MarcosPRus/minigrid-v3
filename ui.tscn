@@ -38,6 +38,10 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="ButtonSimulate" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Simulate"
+
 [node name="ButtonSolar" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "Solar"
@@ -53,6 +57,7 @@ layout_mode = 2
 text = "City"
 icon = SubResource("AtlasTexture_nltto")
 
+[connection signal="pressed" from="HBoxContainer/ButtonSimulate" to="." method="_on_button_simulate_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonSolar" to="." method="_on_button_solar_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonCoal" to="." method="_on_button_coal_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonCity" to="." method="_on_button_city_pressed"]

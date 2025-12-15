@@ -134,7 +134,6 @@ func solve() -> void:
 	# un nuevo estado de la red
 	for line in Caps.keys():
 		final_flows[line] = Caps[line] - Caps_copy[line]
-	AlgorithmManager.new_grid_state(final_flows)
 
 
 func get_bottleneck_capacity(path: PackedInt64Array) -> float:
@@ -171,3 +170,13 @@ func reduce_capacity_along_path(path: PackedInt64Array, cap: float) -> void:
 			if Caps_copy[line_id_2] <= 0:
 				G_copy.disconnect_points(path[i], path[i+1])
 				print("[Mod A* Debug] Segment ", str(path[i]), "-", str(path[i+1]), " removed ")
+
+
+func set_connection_capacity(id_a: int, id_b: int, new_cap: float) -> void:
+	var line_id_1 = str(id_a) + "-" + str(id_b)
+	var line_id_2 = str(id_b) + "-" + str(id_a)
+	# TODO: Tiene que haber una mejor forma de hacer esto
+	if Caps.has(line_id_1):
+		Caps[line_id_1] = new_cap
+	elif Caps_copy.has(line_id_2):
+		Caps[line_id_2] = new_cap

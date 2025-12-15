@@ -7,8 +7,8 @@ var NodesContainer: Node2D
 var LinesContainer: Node2D
 var Solver: mod_AStar2D
 
-var nodes: Dictionary = {}
-var lines: Dictionary = {}
+var nodes: Dictionary[int,GridNode] = {}
+var lines: Dictionary[String, GridLine] = {}
 
 
 func _ready() -> void:
@@ -31,7 +31,7 @@ func _ready() -> void:
 func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int:
 	# Creamos el id del nuevo nodo
 	var new_node_id: int = -1
-	var virt_node_id: int = 0
+	var virt_node_id: int = -1
 	# Lo actualizamos según nos diga el Solver
 	if type == VIRTUAL: # Si es un virtual
 		new_node_id = Solver.add_node(pos, weight)
@@ -90,12 +90,44 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	return new_line_id
 
 
+func update_generator_state(node_id: int, new_cap: float, new_cost: float) -> void:
+	# Un generador modifica su capacidad máxima de generación
+	# modificando la capacidad de la línea que conecta el SS con el generador virtual
+	Solver.set_connection_capacity(SS, node_id-1, new_cap)
+	# Y también su coste (Peso del nodo virtual)
+	Solver.set_point_weight_scale(node_id - 1, new_cost) # El nodo generador virtual siempre tiene el id del generador -1
+
+
+func update_consumer_state(node_id: int, new_demand: float) -> void:
+	# Un consumidor modifica su demanda modificando la capacidad
+	# de la línea que conecta el SC con el consumidor
+	Solver.set_connection_capacity(SC, node_id, new_demand)
+
+
 func update_grid() -> void:
+	for n in nodes.values():
+		n.update_params()
+	
 	Solver.solve()
+	
+	update_flows(Solver.final_flows)
 
 
-func new_grid_state(final_flows: Dictionary) -> void:
+func update_flows(final_flows: Dictionary) -> void:
+	var format_string: String = "%.2f / %.2f"
+	
 	print("Final flows: ")
 	for line_id in lines.keys():
 		lines[line_id].flow = final_flows[line_id]
 		print(line_id, ": ", final_flows[line_id])
+	
+	for node_id in nodes.keys():
+		var n = nodes[node_id]
+		if n.is_generator:
+			var gen: float = final_flows[str(SS)+"-"+str(n.id-1)]
+			var cap: float = Solver.Caps[str(SS)+"-"+str(n.id-1)]
+			n.state_label.text = format_string % [gen, cap]
+		elif n.is_consumer:
+			var dem_sat: float = final_flows[str(SC)+"-"+str(n.id)]
+			var dem_tot: float = Solver.Caps[str(SC)+"-"+str(n.id)]
+			n.state_label.text = format_string % [dem_sat, dem_tot]
