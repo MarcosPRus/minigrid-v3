@@ -116,7 +116,7 @@ func solve() -> void:
 	copy_G_into_G_copy()
 	Caps_copy = Caps.duplicate()
 	
-	var next_path = G_copy.get_id_path(SS, SC)
+	var next_path = G_copy.get_id_path(SS, SC, false)
 	
 	while next_path:
 		print("[Mod A* Debug] Shortest path found: ", next_path)

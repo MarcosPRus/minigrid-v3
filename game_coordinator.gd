@@ -13,4 +13,4 @@ func _on_phase_timer_timeout() -> void:
 	else:
 		current_phase += 1
 	print("New phase started: ", phases.find_key(current_phase))
-	AlgorithmManager.update_grid()
+	#AlgorithmManager.update_grid()
