@@ -113,9 +113,7 @@ func update_grid() -> void:
 	update_flows(Solver.final_flows)
 
 
-func update_flows(final_flows: Dictionary) -> void:
-	var format_string: String = "%.2f / %.2f"
-	
+func update_flows(final_flows: Dictionary) -> void:	
 	print("Final flows: ")
 	for line_id in lines.keys():
 		lines[line_id].flow = final_flows[line_id]
@@ -126,8 +124,8 @@ func update_flows(final_flows: Dictionary) -> void:
 		if n.is_generator:
 			var gen: float = final_flows[str(SS)+"-"+str(n.id-1)]
 			var cap: float = Solver.Caps[str(SS)+"-"+str(n.id-1)]
-			n.state_label.text = format_string % [gen, cap]
+			n.update_gen_gui(gen, cap)
 		elif n.is_consumer:
 			var dem_sat: float = final_flows[str(SC)+"-"+str(n.id)]
 			var dem_tot: float = Solver.Caps[str(SC)+"-"+str(n.id)]
-			n.state_label.text = format_string % [dem_sat, dem_tot]
+			n.update_cons_gui(dem_sat, dem_tot)
