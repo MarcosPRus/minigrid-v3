@@ -2,5 +2,5 @@ extends Node2D
 
 
 func _ready() -> void:
-	AlgorithmManager.NodesContainer = $GameCoordinator/NodesContainer
-	AlgorithmManager.LinesContainer = $GameCoordinator/LinesContainer
+	AlgorithmManager.NodesContainer = $NodesContainer
+	AlgorithmManager.LinesContainer = $LinesContainer

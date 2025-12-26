@@ -42,3 +42,4 @@ right_click={
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.000124093, 0.00934913, 0.133902, 1)

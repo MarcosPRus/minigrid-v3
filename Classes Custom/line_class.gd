@@ -41,7 +41,7 @@ func _ready() -> void:
 func update_params() -> void:
 	if is_virtual:
 		return
-	capacity = randf_range(0.1, 2.0) ## TODO: DELETE THIS SHIT
+	#capacity = randf_range(0.1, 2.0) ## TODO: DELETE THIS SHIT
 	AlgorithmManager.Solver.set_connection_capacity(id_a, id_b, capacity)
 
 

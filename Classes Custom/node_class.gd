@@ -1,27 +1,49 @@
 class_name GridNode
 extends Node2D
 
+static var total_consumption: float
+static var total_generation: float
+
 var id: int
 var type: int
 var pos: Vector2
+var base_cap: int = 2
+var variance: float = 0.05
 
 var is_virtual: bool = false
 var is_generator: bool = false
 var is_consumer: bool = false
+var hourly_profile: Curve
 
 @onready var sprite: Sprite2D = Sprite2D.new()
-@onready var click_area: Area2D = load("res://click_area.tscn").instantiate()
-@onready var node_gui: Control = load("res://node_gui.tscn").instantiate()
+@onready var click_area: Area2D = load("res://Node Components/click_area.tscn").instantiate()
+@onready var node_gui: Control = load("res://Node Components/node_gui.tscn").instantiate()
 
 
 func _ready() -> void:
-	if type == AlgorithmManager.VIRTUAL:
-		is_virtual = true
-		return
-	elif type > AlgorithmManager.VIRTUAL and type < AlgorithmManager.INDUSTRIAL: # Generator
-		is_generator = true
-	elif type >= AlgorithmManager.INDUSTRIAL and type <= AlgorithmManager.RESIDENTIAL:
-		is_consumer = true
+	match type:
+		AlgorithmManager.VIRTUAL:
+			is_virtual = true
+			return
+		AlgorithmManager.SOLAR:
+			is_generator = true
+			hourly_profile = load("res://Hourly Profiles/solar_profile.tres")
+		AlgorithmManager.WIND:
+			is_generator = true
+			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
+		AlgorithmManager.HYDRO:
+			is_generator = true
+			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
+		AlgorithmManager.NUCLEAR:
+			is_generator = true
+			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
+		AlgorithmManager.COAL:
+			is_generator = true
+			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
+		AlgorithmManager.RESIDENTIAL:
+			is_consumer = true
+			hourly_profile = load("res://Hourly Profiles/residential_profile.tres")
+	
 	## Initial configuration
 	self.global_position = pos
 	
@@ -40,9 +62,13 @@ func update_params() -> void:
 	if is_virtual:
 		return
 	
-	var aux_value = randf_range(0.0, 2.0) ## TODO: DELETE THIS SHIT
+	# TODO: Implementar calculo de nuevos parámetros según hora y parámetros ambientales
+	var aux_value = base_cap * \
+					hourly_profile.sample(GameCoordinator.hour) * \
+					randf_range(1-variance, 1+variance)
+	
 	if is_generator: # Generator
-		AlgorithmManager.update_generator_state(id, aux_value, randf_range(0.0, 1.025))
+		AlgorithmManager.update_generator_state(id, aux_value, BuildingManager.weights[type])
 	else:
 		AlgorithmManager.update_consumer_state(id, aux_value)
 
@@ -52,7 +78,7 @@ func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: in
 		BuildingManager.node_selected(self)
 
 
-func update_gen_gui(gen: float, cap: float) -> void:
+func update_gen_gui(gen: float, cap: float) -> void:	
 	node_gui.update_progress_bar(gen, cap)
 	
 

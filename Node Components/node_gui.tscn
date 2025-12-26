@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://be2i477khatdn"]
 
-[ext_resource type="Script" uid="uid://hqd0kbc62dcj" path="res://node_gui.gd" id="1_bgwuy"]
+[ext_resource type="Script" uid="uid://hqd0kbc62dcj" path="res://Node Components/node_gui.gd" id="1_xj4pt"]
 
 [node name="NodeGUI" type="Control"]
 layout_mode = 3
@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-script = ExtResource("1_bgwuy")
+script = ExtResource("1_xj4pt")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 layout_mode = 0

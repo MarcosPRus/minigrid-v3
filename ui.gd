@@ -19,8 +19,21 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 #region Button pressed signals
+func _on_button_simulate_pressed() -> void:
+	AlgorithmManager.update_grid()
+
 func _on_button_solar_pressed() -> void:
 	var type: int = AlgorithmManager.SOLAR
+	BuildingManager.button_pressed(type)
+	preview_sprite.frame = type
+
+func _on_button_wind_pressed() -> void:
+	var type: int = AlgorithmManager.WIND
+	BuildingManager.button_pressed(type)
+	preview_sprite.frame = type
+
+func _on_button_hydro_pressed() -> void:
+	var type: int = AlgorithmManager.HYDRO
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
 
@@ -34,7 +47,3 @@ func _on_button_city_pressed() -> void:
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
 #endregion
-
-
-func _on_button_simulate_pressed() -> void:
-	AlgorithmManager.update_grid()
