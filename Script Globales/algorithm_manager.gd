@@ -18,14 +18,6 @@ func _ready() -> void:
 	var SS = add_node(Vector2(0, 648/2), VIRTUAL, "SS", 1.0) # ID 0 por ser el primero
 	var SC = add_node(Vector2(1152, 648/2), VIRTUAL, "SC", 1.0) # ID 1 por ser el segundo
 	assert(SS == 0 and SC == 1, "SS and SC IDs are incorrect!")
-	
-	
-	#var n1: int = add_node(Vector2(500, 300), SOLAR, "Solar", 1.0)
-	#var n2: int = add_node(Vector2(700, 500), RESIDENTIAL, "City", 1.0)
-	#var n3: int = add_node(Vector2(500, 700), COAL, "Coal", 1.0)
-	#var l1: String = connect_nodes(n1, n2, 1.0)
-	#var l2: String = connect_nodes(n2, n3, 1.0)
-	#Solver.solve()
 
 
 func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int:
@@ -108,6 +100,9 @@ func update_grid() -> void:
 	for l in lines.values():
 		l.update_params()
 	
+	# TODO: Cambiar esto a ejecución por grupos, primero los consumidores,
+	# luego los generadores inflexibles, luego los generadores flexibles,
+	# y por último el almacenamiento.
 	for n in nodes.values():
 		n.update_params()
 	
@@ -118,12 +113,11 @@ func update_grid() -> void:
 
 func update_flows(final_flows: Dictionary) -> void:	
 	print("Final flows: ")
-	for line_id in lines.keys():
-		lines[line_id].flow = final_flows[line_id]
-		print(line_id, ": ", final_flows[line_id])
+	for l in lines.values():
+		l.flow = final_flows[l.id]
+		print(l.id, ": ", final_flows[l.id])
 	
-	for node_id in nodes.keys():
-		var n = nodes[node_id]
+	for n in nodes.values():
 		if n.is_generator:
 			var gen: float = final_flows[str(SS)+"-"+str(n.id-1)]
 			var cap: float = Solver.Caps[str(SS)+"-"+str(n.id-1)]

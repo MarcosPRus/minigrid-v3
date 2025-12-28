@@ -4,6 +4,9 @@ extends Node2D
 static var total_consumption: float
 static var total_generation: float
 
+var total_energy_gen: float = 0.0
+var total_energy_con: float = 0.0
+
 var id: int
 var type: int
 var pos: Vector2
