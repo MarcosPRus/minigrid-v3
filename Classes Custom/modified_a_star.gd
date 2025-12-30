@@ -172,7 +172,7 @@ func reduce_capacity_along_path(path: PackedInt64Array, cap: float) -> void:
 				print("[Mod A* Debug] Segment ", str(path[i]), "-", str(path[i+1]), " removed ")
 
 
-func set_connection_capacity(id_a: int, id_b: int, new_cap: float) -> void:
+func set_connection_capacity(id_a: int, id_b: int, new_cap: int) -> void:
 	var line_id_1 = str(id_a) + "-" + str(id_b)
 	var line_id_2 = str(id_b) + "-" + str(id_a)
 	# TODO: Tiene que haber una mejor forma de hacer esto

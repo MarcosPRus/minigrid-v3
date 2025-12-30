@@ -8,6 +8,9 @@ var tween_max: Tween
 
 func _ready() -> void:
 	var parent = get_parent()
+	
+	$Sprite2D.frame = parent.type
+	
 	if parent.is_generator:
 		var style_box := StyleBoxFlat.new()
 		style_box.bg_color = Color.TEAL

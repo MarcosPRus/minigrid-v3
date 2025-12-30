@@ -1,7 +1,7 @@
 extends Node2D
 
 enum {SS, SC}
-enum {VIRTUAL, SOLAR, WIND, HYDRO, NUCLEAR, GAS, COAL, INDUSTRIAL, COMMERCIAL, RESIDENTIAL}
+enum {VIRTUAL, SOLAR, WIND, HYDRO, THERMAL, INDUSTRIAL, RESIDENTIAL}
 
 var NodesContainer: Node2D
 var LinesContainer: Node2D
@@ -28,7 +28,7 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 	if type == VIRTUAL: # Si es un virtual
 		new_node_id = Solver.add_node(pos, weight)
 		save_node(new_node_id, pos, type, name_)
-	elif type <= COAL: # Si es un generador
+	elif type <= THERMAL: # Si es un generador
 		# Añadimos el generador virtual
 		virt_node_id = add_node(pos-Vector2(128, 0), VIRTUAL, name_+"_v", weight)
 		# Añadimos el nodo real con peso 1
@@ -43,21 +43,15 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 		# Lo conectamos al SC
 		save_node(new_node_id, pos, type, name_)
 		connect_nodes(SC, new_node_id, 1.0) # Demanda 1 por defecto (Demanda)
-
+	
 	return new_node_id
 
 
 func save_node(new_node_id: int, pos: Vector2, type: int, name_:String) -> void:
 	# Creamos la instancia del nodo, y la añadimos al diccionario de nodos
-	var new_node: GridNode = GridNode.new()
-	new_node.id = new_node_id
-	new_node.name = name_
-	new_node.pos = pos
-	new_node.type = type
+	var new_node: GridNode = GridNode.add_node_scene(new_node_id, pos, type, name_)
 	NodesContainer.add_child(new_node)
-	
 	nodes[new_node_id] = new_node
-	
 	print("[AlgorithmManager Debug] New node (", str(new_node_id), ") saved!: ", str(new_node), "  at ", str(pos))
 
 
@@ -82,7 +76,7 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	return new_line_id
 
 
-func update_generator_state(node_id: int, new_cap: float, new_cost: float) -> void:
+func update_generator_state(node_id: int, new_cap: int, new_cost: float) -> void:
 	# Un generador modifica su capacidad máxima de generación
 	# modificando la capacidad de la línea que conecta el SS con el generador virtual
 	Solver.set_connection_capacity(SS, node_id-1, new_cap)
@@ -90,7 +84,7 @@ func update_generator_state(node_id: int, new_cap: float, new_cost: float) -> vo
 	Solver.set_point_weight_scale(node_id - 1, new_cost) # El nodo generador virtual siempre tiene el id del generador -1
 
 
-func update_consumer_state(node_id: int, new_demand: float) -> void:
+func update_consumer_state(node_id: int, new_demand: int) -> void:
 	# Un consumidor modifica su demanda modificando la capacidad
 	# de la línea que conecta el SC con el consumidor
 	Solver.set_connection_capacity(SC, node_id, new_demand)

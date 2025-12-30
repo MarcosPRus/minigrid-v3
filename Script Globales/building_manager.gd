@@ -3,8 +3,8 @@ extends Node2D
 enum states {IDLE, NODE_PREVIEW, LINE_PREVIEW}
 
 ## Array de pesos para cada tipo de nodo
-#                      VIRT    SOLAR  WIND   HYDRO NUCLEAR  GAS   COAL   IND   COMM  RES
-var weights: Array = [100.000, 1.000, 1.003, 1.005, 1.008, 1.020, 1.025, 1.00, 1.00, 1.00]
+#                      VIRT    SOLAR  WIND   HYDRO THERMAL  IND   RES
+var weights: Array = [100.000, 1.000, 1.003, 1.005, 1.020, 1.00, 1.00]
 
 var UI: Control
 var state: int = states.IDLE

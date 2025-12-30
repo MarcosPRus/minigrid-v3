@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://be2i477khatdn"]
+[gd_scene load_steps=3 format=3 uid="uid://be2i477khatdn"]
 
 [ext_resource type="Script" uid="uid://hqd0kbc62dcj" path="res://Node Components/node_gui.gd" id="1_xj4pt"]
+[ext_resource type="Texture2D" uid="uid://dar36cotu7ura" path="res://Assets/spritesheet.svg" id="2_le53u"]
 
 [node name="NodeGUI" type="Control"]
 layout_mode = 3
@@ -16,6 +17,7 @@ size_flags_vertical = 4
 script = ExtResource("1_xj4pt")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -32.0
 offset_top = -64.0
@@ -25,6 +27,7 @@ step = 0.0
 allow_greater = true
 
 [node name="Label" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -32.0
 offset_top = 32.0
@@ -32,3 +35,10 @@ offset_right = 32.0
 offset_bottom = 59.0
 text = "?"
 horizontal_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 54)
+scale = Vector2(0.53125, 0.53125)
+texture = ExtResource("2_le53u")
+hframes = 7
+frame = 2

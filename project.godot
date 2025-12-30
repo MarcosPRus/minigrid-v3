@@ -23,7 +23,13 @@ GameCoordinator="*res://Script Globales/game_coordinator.gd"
 
 [display]
 
+window/size/viewport_width=640
+window/size/viewport_height=480
 window/stretch/aspect="expand"
+
+[global_group]
+
+"Flexible Generators"=""
 
 [input]
 

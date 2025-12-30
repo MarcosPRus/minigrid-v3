@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfb15q3f3ff5i"]
+
+[ext_resource type="Script" uid="uid://dw8w6ansk68qb" path="res://Nodos/4_Thermal/thermal_node.gd" id="1_dd6eo"]
+
+[node name="VirtualNode" type="Node2D" groups=["Flexible Generators"]]
+script = ExtResource("1_dd6eo")
+is_virtual = true
+metadata/_custom_type_script = "uid://02481mh4bwgd"

@@ -8,57 +8,41 @@ var total_energy_gen: float = 0.0
 var total_energy_con: float = 0.0
 
 var id: int
-var type: int
+@export var type: int
 var pos: Vector2
-var base_cap: int = 2
-var variance: float = 0.05
+@export var base_cap: int = 5
 
-var is_virtual: bool = false
-var is_generator: bool = false
-var is_consumer: bool = false
-var hourly_profile: Curve
+@export var is_virtual: bool = false
+@export var is_generator: bool = false
+@export var is_consumer: bool = false
+@export var hourly_profile: Curve
 
-@onready var sprite: Sprite2D = Sprite2D.new()
-@onready var click_area: Area2D = load("res://Node Components/click_area.tscn").instantiate()
-@onready var node_gui: Control = load("res://Node Components/node_gui.tscn").instantiate()
+@onready var click_area: Area2D = $ClickArea
+@onready var node_gui: Control = $NodeGUI
+@onready var node_gui_v2: ColorRect = $NodeGUIv2
 
 
-func _ready() -> void:
-	match type:
-		AlgorithmManager.VIRTUAL:
-			is_virtual = true
-			return
-		AlgorithmManager.SOLAR:
-			is_generator = true
-			hourly_profile = load("res://Hourly Profiles/solar_profile.tres")
-		AlgorithmManager.WIND:
-			is_generator = true
-			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
-		AlgorithmManager.HYDRO:
-			is_generator = true
-			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
-		AlgorithmManager.NUCLEAR:
-			is_generator = true
-			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
-		AlgorithmManager.COAL:
-			is_generator = true
-			hourly_profile = load("res://Hourly Profiles/constant_profile.tres")
-		AlgorithmManager.RESIDENTIAL:
-			is_consumer = true
-			hourly_profile = load("res://Hourly Profiles/residential_profile.tres")
-	
-	## Initial configuration
-	self.global_position = pos
-	
-	sprite.texture = load("res://Assets/spritesheet.png")
-	sprite.hframes = 10
-	sprite.frame = type
+static func add_node_scene(new_node_id: int, pos: Vector2, type: int, name_: String) -> GridNode:
+	var node_scenes := [load("res://Nodos/0_Virtual/virtual_node.tscn"), \
+						load("res://Nodos/1_Solar/solar_node.tscn"), \
+						load("res://Nodos/2_Wind/wind_node.tscn"), \
+						load("res://Nodos/3_Hydro/hydro_node.tscn"), \
+						load("res://Nodos/4_Thermal/thermal_node.tscn"), \
+						load("res://Nodos/5_Industrial/industrial_node.tscn"), \
+						load("res://Nodos/6_Residential/residential_node.tscn")]
+						
+	var new_node: GridNode = node_scenes[type].instantiate()
+	new_node.id = new_node_id
+	new_node.name = name_
+	new_node.global_position = pos
+	return new_node
+
+
+func _ready() -> void:	
+	if type == AlgorithmManager.VIRTUAL:
+		return
 	
 	click_area.input_event.connect(_on_click_area_input_event)
-	
-	add_child(sprite)
-	add_child(click_area)
-	add_child(node_gui)
 
 
 func update_params() -> void:
@@ -66,9 +50,7 @@ func update_params() -> void:
 		return
 	
 	# TODO: Implementar calculo de nuevos parámetros según hora y parámetros ambientales
-	var aux_value = base_cap * \
-					hourly_profile.sample(GameCoordinator.hour) * \
-					randf_range(1-variance, 1+variance)
+	var aux_value: int = ceil(base_cap * hourly_profile.sample(GameCoordinator.hour))
 	
 	if is_generator: # Generator
 		AlgorithmManager.update_generator_state(id, aux_value, BuildingManager.weights[type])
@@ -83,7 +65,9 @@ func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: in
 
 func update_gen_gui(gen: float, cap: float) -> void:	
 	node_gui.update_progress_bar(gen, cap)
-	
+	node_gui_v2.update_shader(gen, base_cap, cap/base_cap)
+
 
 func update_cons_gui(dem_sat: float, dem_tot: float) -> void:
 	node_gui.update_progress_bar(dem_sat, dem_tot)
+	node_gui_v2.update_shader(dem_sat, base_cap, dem_tot/base_cap)

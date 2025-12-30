@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://obvu4e5vhhgp"]
+[gd_scene load_steps=9 format=3 uid="uid://obvu4e5vhhgp"]
 
 [ext_resource type="Script" uid="uid://byy3w2y4wb63t" path="res://ui.gd" id="1_fyqef"]
-[ext_resource type="Texture2D" uid="uid://dn80bckgxdstu" path="res://Assets/spritesheet.png" id="2_m6e0p"]
+[ext_resource type="Texture2D" uid="uid://dar36cotu7ura" path="res://Assets/spritesheet.svg" id="2_m6e0p"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ibotj"]
 atlas = ExtResource("2_m6e0p")
@@ -17,11 +17,15 @@ region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_27fn8"]
 atlas = ExtResource("2_m6e0p")
-region = Rect2(384, 0, 64, 64)
+region = Rect2(256, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nltto"]
 atlas = ExtResource("2_m6e0p")
-region = Rect2(576, 0, 64, 64)
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4yjw"]
+atlas = ExtResource("2_m6e0p")
+region = Rect2(384, 0, 64, 64)
 
 [node name="UI" type="Control"]
 layout_mode = 3
@@ -34,7 +38,7 @@ script = ExtResource("1_fyqef")
 
 [node name="PreviewSprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_m6e0p")
-hframes = 10
+hframes = 7
 
 [node name="PreviewLine" type="Line2D" parent="."]
 points = PackedVector2Array(0, 0, 0, 0)
@@ -65,19 +69,26 @@ layout_mode = 2
 text = "Hydro"
 icon = SubResource("AtlasTexture_n5ude")
 
-[node name="ButtonCoal" type="Button" parent="HBoxContainer"]
+[node name="ButtonThermal" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-text = "Coal"
+text = "Thermal"
 icon = SubResource("AtlasTexture_27fn8")
 
-[node name="ButtonCity" type="Button" parent="HBoxContainer"]
+[node name="ButtonIndustrial" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Industry
+"
+icon = SubResource("AtlasTexture_nltto")
+
+[node name="ButtonResidential" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "City"
-icon = SubResource("AtlasTexture_nltto")
+icon = SubResource("AtlasTexture_y4yjw")
 
 [connection signal="pressed" from="HBoxContainer/ButtonSimulate" to="." method="_on_button_simulate_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonSolar" to="." method="_on_button_solar_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonWind" to="." method="_on_button_wind_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonHydro" to="." method="_on_button_hydro_pressed"]
-[connection signal="pressed" from="HBoxContainer/ButtonCoal" to="." method="_on_button_coal_pressed"]
-[connection signal="pressed" from="HBoxContainer/ButtonCity" to="." method="_on_button_city_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonThermal" to="." method="_on_button_thermal_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonIndustrial" to="." method="_on_button_industrial_pressed"]
+[connection signal="pressed" from="HBoxContainer/ButtonResidential" to="." method="_on_button_residential_pressed"]

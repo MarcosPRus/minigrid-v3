@@ -8,7 +8,7 @@ var id_a: int
 var id_b: int
 var pos_a: Vector2
 var pos_b: Vector2
-var capacity: float = 1.0
+var capacity: int = 2
 var is_virtual: bool = false
 
 # Para la animación del shader

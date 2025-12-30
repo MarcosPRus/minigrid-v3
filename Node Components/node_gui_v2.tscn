@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmdhnea25lty5"]
+
+[ext_resource type="Shader" uid="uid://b4mn6gkh3aynm" path="res://Nodos/grid_node.gdshader" id="1_nakum"]
+[ext_resource type="Script" uid="uid://brn7n1bs8qsqf" path="res://Node Components/node_gui_v_2.gd" id="2_nnuug"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cb3qi"]
+shader = ExtResource("1_nakum")
+shader_parameter/forma_nodo = 1
+shader_parameter/nivel_actual = 3
+shader_parameter/nivel_maximo = 6
+shader_parameter/color_lleno = Color(0.2, 0.8, 0.2, 1)
+shader_parameter/color_vacio = Color(0.0568474, 0.136917, 0.056658, 1)
+shader_parameter/grosor_separador = 0.1
+shader_parameter/factor_disponibilidad = 0.503
+shader_parameter/color_bloqueado = Color(0, 1, 1, 1)
+shader_parameter/grosor_rayado = 0.5
+
+[node name="NodeGUIv2" type="ColorRect"]
+material = SubResource("ShaderMaterial_cb3qi")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_nnuug")

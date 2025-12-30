@@ -37,12 +37,17 @@ func _on_button_hydro_pressed() -> void:
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
 
-func _on_button_coal_pressed() -> void:
-	var type: int = AlgorithmManager.COAL
+func _on_button_thermal_pressed() -> void:
+	var type: int = AlgorithmManager.THERMAL
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
 
-func _on_button_city_pressed() -> void:
+func _on_button_industrial_pressed() -> void:
+	var type: int = AlgorithmManager.INDUSTRIAL
+	BuildingManager.button_pressed(type)
+	preview_sprite.frame = type
+
+func _on_button_residential_pressed() -> void:
 	var type: int = AlgorithmManager.RESIDENTIAL
 	BuildingManager.button_pressed(type)
 	preview_sprite.frame = type
