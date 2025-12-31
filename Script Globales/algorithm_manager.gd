@@ -15,8 +15,8 @@ func _ready() -> void:
 	Solver = mod_AStar2D.new()
 	await get_tree().create_timer(0.5).timeout
 	# Añadimos los nodos SS y SC lo primero
-	var SS = add_node(Vector2(0, 648/2), VIRTUAL, "SS", 1.0) # ID 0 por ser el primero
-	var SC = add_node(Vector2(1152, 648/2), VIRTUAL, "SC", 1.0) # ID 1 por ser el segundo
+	var SS = add_node(Vector2(-10000, -10000), VIRTUAL, "SS", 1.0) # ID 0 por ser el primero
+	var SC = add_node(Vector2(-10000, -10000), VIRTUAL, "SC", 1.0) # ID 1 por ser el segundo
 	assert(SS == 0 and SC == 1, "SS and SC IDs are incorrect!")
 
 

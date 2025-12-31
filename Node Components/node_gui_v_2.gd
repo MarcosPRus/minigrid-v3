@@ -1,19 +1,31 @@
 extends ColorRect
 
+@onready var parent: GridNode = get_parent()
 
 func _ready() -> void:
 	material = material.duplicate()
 	
-	if get_parent().type >= AlgorithmManager.INDUSTRIAL:
-		material.set_shader_parameter("forma_nodo", 0)
+	if parent.is_generator:
+		material.set_shader_parameter("node_shape", 1)
+		if parent.type == AlgorithmManager.HYDRO:
+			material.set_shader_parameter("node_shape", 2)
+	elif parent.is_consumer:
+		material.set_shader_parameter("node_shape", 0)
+
 
 func update_shader(val: float, max: float, disp: float) -> void:
 	var mat = material as ShaderMaterial
-	mat.set_shader_parameter("nivel_actual", val)
-	mat.set_shader_parameter("nivel_maximo", max)
-	mat.set_shader_parameter("factor_disponibilidad", disp)
+	mat.set_shader_parameter("current_level", val)
+	mat.set_shader_parameter("total_segments", max)
+	mat.set_shader_parameter("availability_factor", disp)
 	
-	if disp * max > val:
-		mat.set_shader_parameter("color_lleno", Color.CRIMSON)
-	else:
-		mat.set_shader_parameter("color_lleno", Color.GREEN)
+	if parent.is_consumer:
+		if disp * max > val:
+			mat.set_shader_parameter("color_fill", Color.RED)
+		else:
+			mat.set_shader_parameter("color_fill", Color.GREEN)
+	elif parent.is_generator:
+		if disp * max == val:
+			mat.set_shader_parameter("color_fill", Color.YELLOW)
+		else:
+			mat.set_shader_parameter("color_fill", Color.GREEN)

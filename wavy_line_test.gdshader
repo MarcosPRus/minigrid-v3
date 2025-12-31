@@ -3,7 +3,7 @@ shader_type canvas_item;
 // Quitamos la "velocidad" de aquí, la calcularemos fuera
 uniform float carga : hint_range(0.0, 1.0);
 uniform float offset_animacion; // Este será nuestro "tiempo manual"
-uniform float grosor_visual : hint_range(0.01, 0.5) = 0.1;
+uniform float grosor_visual : hint_range(0.01, 0.5) = 0.3;
 
 uniform vec4 color_base : source_color = vec4(0.0, 0.8, 1.0, 1.0);
 uniform vec4 color_sobrecarga : source_color = vec4(1.0, 0.2, 0.0, 1.0);

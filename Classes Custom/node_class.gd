@@ -20,6 +20,7 @@ var pos: Vector2
 @onready var click_area: Area2D = $ClickArea
 @onready var node_gui: Control = $NodeGUI
 @onready var node_gui_v2: ColorRect = $NodeGUIv2
+@onready var node_gui_v3: NodeGUIv3 = $NodeGUIv3
 
 
 static func add_node_scene(new_node_id: int, pos: Vector2, type: int, name_: String) -> GridNode:
@@ -43,7 +44,7 @@ func _ready() -> void:
 		return
 	
 	click_area.input_event.connect(_on_click_area_input_event)
-
+	node_gui_v3.setup(base_cap)
 
 func update_params() -> void:
 	if is_virtual:
@@ -66,8 +67,10 @@ func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: in
 func update_gen_gui(gen: float, cap: float) -> void:	
 	node_gui.update_progress_bar(gen, cap)
 	node_gui_v2.update_shader(gen, base_cap, cap/base_cap)
+	node_gui_v3.update_generation(gen, base_cap, cap/base_cap)
 
 
 func update_cons_gui(dem_sat: float, dem_tot: float) -> void:
 	node_gui.update_progress_bar(dem_sat, dem_tot)
 	node_gui_v2.update_shader(dem_sat, base_cap, dem_tot/base_cap)
+	node_gui_v3.update_generation(dem_sat, base_cap, dem_tot/base_cap)

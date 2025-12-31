@@ -1,11 +1,19 @@
+class_name UI
 extends Control
+
+var months: Array[String] = ["January", "February", "March",
+							"April", "May", "June", "Jule",
+							"August", "September", "October",
+							"November", "December"]
 
 @onready var preview_sprite: Sprite2D = $PreviewSprite
 @onready var preview_line: Line2D = $PreviewLine
-
+@onready var calendar: Label = $HBoxContainer2/HBoxContainer/Calendar
+@onready var clock: Label = $HBoxContainer2/Clock
 
 func _ready() -> void:
 	BuildingManager.UI = self
+	GameCoordinator.UI = self
 	preview_sprite.hide()
 	preview_line.hide()
 
@@ -15,7 +23,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		BuildingManager.left_click(get_global_mouse_position())
 	elif event.is_action_pressed("right_click"):
 		BuildingManager.right_click()
-		
+
+
+func update_time_weather(hour: int, day: int, month: int, year: int, irr: float, ws: float) -> void:
+	calendar.text = str(day) + " " + months[month-1] + str(year)
+	clock.text = str(hour) + ":00"
 
 
 #region Button pressed signals

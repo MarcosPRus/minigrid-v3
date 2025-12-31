@@ -37,8 +37,8 @@ text = "?"
 horizontal_alignment = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, 54)
-scale = Vector2(0.53125, 0.53125)
+position = Vector2(0, 80)
+scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_le53u")
 hframes = 7
 frame = 2

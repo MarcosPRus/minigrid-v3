@@ -4,7 +4,7 @@ enum states {IDLE, NODE_PREVIEW, LINE_PREVIEW}
 
 ## Array de pesos para cada tipo de nodo
 #                      VIRT    SOLAR  WIND   HYDRO THERMAL  IND   RES
-var weights: Array = [100.000, 1.000, 1.003, 1.005, 1.020, 1.00, 1.00]
+var weights: Array = [5.000, 1.001, 1.002, 1.005, 1.012, 1.000, 1.000]
 
 var UI: Control
 var state: int = states.IDLE

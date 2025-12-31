@@ -8,13 +8,13 @@ var id_a: int
 var id_b: int
 var pos_a: Vector2
 var pos_b: Vector2
-var capacity: int = 2
+var capacity: int = 10
 var is_virtual: bool = false
 
 # Para la animación del shader
 var aux_flow: float = 0.0
 var offset: float = 0.0
-const ANIM_SPEED = 2.0
+const ANIM_SPEED = 2.5
 
 var flow: float
 
@@ -56,7 +56,7 @@ func _process(delta: float) -> void:
 	if not material: return
 	
 	aux_flow = move_toward(aux_flow, flow, delta * ANIM_SPEED)
-	var wave_speed = 3.0 + (aux_flow * 10.0)
+	var wave_speed = 2.0 + (aux_flow * 2.0)
 	offset += wave_speed * delta
 	# Para evitar que el offset crezca hasta el infinito
 	offset = fmod(offset, TAU)

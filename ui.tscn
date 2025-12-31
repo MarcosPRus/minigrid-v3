@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://obvu4e5vhhgp"]
+[gd_scene load_steps=10 format=3 uid="uid://obvu4e5vhhgp"]
 
 [ext_resource type="Script" uid="uid://byy3w2y4wb63t" path="res://ui.gd" id="1_fyqef"]
 [ext_resource type="Texture2D" uid="uid://dar36cotu7ura" path="res://Assets/spritesheet.svg" id="2_m6e0p"]
+[ext_resource type="Texture2D" uid="uid://ct7xllh67ooor" path="res://icon.svg" id="3_27fn8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ibotj"]
 atlas = ExtResource("2_m6e0p")
@@ -34,6 +35,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
 script = ExtResource("1_fyqef")
 
 [node name="PreviewSprite" type="Sprite2D" parent="."]
@@ -46,9 +50,17 @@ width = 4.0
 default_color = Color(0, 1, 1, 1)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -422.0
+offset_top = -72.0
+offset_right = 422.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="ButtonSimulate" type="Button" parent="HBoxContainer"]
 layout_mode = 2
@@ -84,6 +96,40 @@ icon = SubResource("AtlasTexture_nltto")
 layout_mode = 2
 text = "City"
 icon = SubResource("AtlasTexture_y4yjw")
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_right = 3.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer2"]
+layout_mode = 2
+
+[node name="SeasonIcon" type="TextureRect" parent="HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_27fn8")
+expand_mode = 2
+
+[node name="Calendar" type="Label" parent="HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "dd Mmmm"
+
+[node name="Clock" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+text = "hh:00"
+
+[node name="WeatherSun" type="TextureRect" parent="HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_27fn8")
+
+[node name="WeatherWind" type="TextureRect" parent="HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("3_27fn8")
 
 [connection signal="pressed" from="HBoxContainer/ButtonSimulate" to="." method="_on_button_simulate_pressed"]
 [connection signal="pressed" from="HBoxContainer/ButtonSolar" to="." method="_on_button_solar_pressed"]

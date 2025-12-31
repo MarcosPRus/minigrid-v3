@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://dc1d3diodqhhy"]
+
+[ext_resource type="Script" uid="uid://cu3g0nwdwva5d" path="res://Node Components/node_gui_v_3.gd" id="1_u8h4r"]
+
+[sub_resource type="Theme" id="Theme_u8h4r"]
+GridContainer/constants/h_separation = 2
+GridContainer/constants/v_separation = 2
+
+[node name="NodeGUIv3" type="GridContainer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -128.0
+offset_right = 64.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_u8h4r")
+columns = 5
+script = ExtResource("1_u8h4r")
