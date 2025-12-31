@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cd1l7op46ijb8"]
+[gd_scene load_steps=7 format=3 uid="uid://cd1l7op46ijb8"]
 
 [ext_resource type="Script" uid="uid://dw8w6ansk68qb" path="res://Nodos/4_Thermal/thermal_node.gd" id="1_njft8"]
 [ext_resource type="Curve" uid="uid://b4g10fm0t7dei" path="res://Hourly Profiles/constant_profile.tres" id="2_n2at8"]
 [ext_resource type="PackedScene" uid="uid://b7oiiibwroklk" path="res://Node Components/click_area.tscn" id="3_f88ak"]
 [ext_resource type="PackedScene" uid="uid://be2i477khatdn" path="res://Node Components/node_gui.tscn" id="4_iqped"]
 [ext_resource type="PackedScene" uid="uid://bmdhnea25lty5" path="res://Node Components/node_gui_v2.tscn" id="5_n2at8"]
+[ext_resource type="PackedScene" uid="uid://dc1d3diodqhhy" path="res://Node Components/node_gui_v3.tscn" id="6_37i7v"]
 
 [node name="WindNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_njft8")
@@ -18,3 +19,5 @@ metadata/_custom_type_script = "uid://02481mh4bwgd"
 [node name="NodeGUI" parent="." instance=ExtResource("4_iqped")]
 
 [node name="NodeGUIv2" parent="." instance=ExtResource("5_n2at8")]
+
+[node name="NodeGUIv3" parent="." instance=ExtResource("6_37i7v")]

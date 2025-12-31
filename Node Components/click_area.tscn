@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7oiiibwroklk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uqmol"]
-radius = 72.0
+radius = 32.0
 
 [node name="ClickArea" type="Area2D"]
 

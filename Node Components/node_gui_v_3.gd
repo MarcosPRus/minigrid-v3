@@ -11,18 +11,16 @@ var rects: Array[ColorRect] = []
 
 func _ready() -> void:
 	color_rect = ColorRect.new()
-	color_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	color_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	#color_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	#color_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	color_rect.custom_minimum_size = rect_min_size
 
 func setup(base_cap: int) -> void:
 	# Limpiar hijos previos si reutilizas el nodo
 	for child in get_children():
 		child.queue_free()
 	rects.clear()
-	
 	columns = min(base_cap, columns)
-	size.x = rect_width * min(base_cap, columns)
-	size.y = rect_width * ceil(base_cap / columns)
 	add_rects(base_cap)
 
 func add_rects(num: int) -> void:
@@ -32,8 +30,11 @@ func add_rects(num: int) -> void:
 		rects.append(new_rect)
 
 func update_generation(val: int, max: int, disp: float) -> void:
-	for i in range(val):
-		rects[i].color = Color.GREEN
+	for i in range(rects.size()):
+		if i < val:
+			rects[i].color = COLOR_ACTIVE
+		else:
+			rects[i].color = COLOR_INACTIVE
 
 func update_consumption(val: int, max: int, disp: float) -> void:
 	for i in range(val):
