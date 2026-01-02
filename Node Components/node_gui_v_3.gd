@@ -2,7 +2,10 @@ class_name NodeGUIv3
 extends GridContainer
 
 const COLOR_ACTIVE = Color.GREEN
-const COLOR_INACTIVE = Color(0.2, 0.2, 0.2) # Gris oscuro
+const COLOR_INACTIVE = Color.POWDER_BLUE
+const COLOR_DISABLED = Color.DARK_GRAY
+const COLOR_INSATISFIED_INACTIVE = Color.PALE_VIOLET_RED
+const COLOR_INSATISFIED = Color.RED
 
 var node_width: int = 128
 var color_rect: ColorRect
@@ -33,9 +36,23 @@ func update_generation(val: int, max: int, disp: float) -> void:
 	for i in range(rects.size()):
 		if i < val:
 			rects[i].color = COLOR_ACTIVE
+		elif i >= disp * max:
+			rects[i].color = COLOR_DISABLED
 		else:
 			rects[i].color = COLOR_INACTIVE
 
 func update_consumption(val: int, max: int, disp: float) -> void:
-	for i in range(val):
-		rects[i].color = Color.GREEN
+	var demand_insatisfied: bool = val < max * disp
+	for i in range(rects.size()):
+		if i < val:
+			if demand_insatisfied:
+				rects[i].color = COLOR_INSATISFIED
+			else:
+				rects[i].color = COLOR_ACTIVE
+		elif i >= disp * max:
+			rects[i].color = COLOR_DISABLED
+		else:
+			if demand_insatisfied:
+				rects[i].color = COLOR_INSATISFIED_INACTIVE
+			else:
+				rects[i].color = COLOR_INACTIVE

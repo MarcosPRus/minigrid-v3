@@ -73,4 +73,4 @@ func update_gen_gui(gen: float, cap: float) -> void:
 func update_cons_gui(dem_sat: float, dem_tot: float) -> void:
 	node_gui.update_progress_bar(dem_sat, dem_tot)
 	node_gui_v2.update_shader(dem_sat, base_cap, dem_tot/base_cap)
-	node_gui_v3.update_generation(dem_sat, base_cap, dem_tot/base_cap)
+	node_gui_v3.update_consumption(dem_sat, base_cap, dem_tot/base_cap)

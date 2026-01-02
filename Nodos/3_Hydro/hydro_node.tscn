@@ -10,6 +10,7 @@
 [node name="HydroNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_64svk")
 type = 3
+base_cap = 3
 is_generator = true
 hourly_profile = ExtResource("2_p24m1")
 metadata/_custom_type_script = "uid://02481mh4bwgd"

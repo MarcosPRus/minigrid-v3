@@ -12,13 +12,15 @@ func _ready() -> void:
 	$Sprite2D.frame = parent.type
 	
 	if parent.is_generator:
-		var style_box := StyleBoxFlat.new()
-		style_box.bg_color = Color.TEAL
-		$ProgressBar.add_theme_stylebox_override("fill", style_box)
+		modulate = Color.DARK_TURQUOISE
+		#var style_box := StyleBoxFlat.new()
+		#style_box.bg_color = Color.TEAL
+		#$ProgressBar.add_theme_stylebox_override("fill", style_box)
 	if parent.is_consumer:
-		var style_box := StyleBoxFlat.new()
-		style_box.bg_color = Color.WEB_MAROON
-		$ProgressBar.add_theme_stylebox_override("fill", style_box)
+		modulate = Color.HOT_PINK
+		#var style_box := StyleBoxFlat.new()
+		#style_box.bg_color = Color.WEB_MAROON
+		#$ProgressBar.add_theme_stylebox_override("fill", style_box)
 
 
 func update_progress_bar(val: float, max: float) -> void:

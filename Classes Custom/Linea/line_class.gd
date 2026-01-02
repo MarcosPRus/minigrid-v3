@@ -28,8 +28,18 @@ func _ready() -> void:
 		is_virtual = true
 		return
 	
-	add_point(pos_a)
-	add_point(pos_b)
+	var a := BuildingManager.building_grid.get_closest_point(pos_a)
+	var b := BuildingManager.building_grid.get_closest_point(pos_b)
+	print("[Line Debug] (A) Closest points to ", str(pos_a), " is ", str(a))
+	print("[Line Debug] (B) Closest points to ", str(pos_b), " is ", str(b))
+	var points_aux := BuildingManager.building_grid.get_point_path(a, b)
+	print("[Line Debug] Points array: ", str(points_aux))
+	for point in points_aux:
+		print("[Line Debug] p: " + str(point))
+		add_point(point)
+		
+	#add_point(pos_a)
+	#add_point(pos_b)
 	apply_shader_and_theme()
 	#add_child(flow_label)
 

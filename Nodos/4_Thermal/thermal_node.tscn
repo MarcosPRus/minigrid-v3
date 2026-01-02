@@ -10,7 +10,7 @@
 [node name="ThermalNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_g4avy")
 type = 4
-base_cap = 6
+base_cap = 4
 is_generator = true
 hourly_profile = ExtResource("2_g4avy")
 metadata/_custom_type_script = "uid://02481mh4bwgd"

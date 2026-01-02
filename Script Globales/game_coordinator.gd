@@ -1,5 +1,6 @@
 extends Node2D
 
+const appearance_chance: float = 0.05
 
 var hour: int = 0
 var day: int = 1
@@ -13,7 +14,7 @@ var UI: UI
 
 func _ready() -> void:
 	hour_timer.autostart = true
-	hour_timer.wait_time = .5
+	hour_timer.wait_time = 1.0
 	hour_timer.one_shot = false
 	hour_timer.connect("timeout", _on_timer_timeout)
 	add_child(hour_timer)
@@ -34,3 +35,12 @@ func _on_timer_timeout() -> void:
 	print("New hour started: ", hour)
 	AlgorithmManager.update_grid()
 	UI.update_time_weather(hour, day, month, year, 1000, 15.6)
+	
+	if randf() <= appearance_chance:
+		spawn_consumer()
+
+
+func spawn_consumer() -> void:
+	var pos = Vector2(randi_range(200,1720), randi_range(200,880))
+	var type = [AlgorithmManager.RESIDENTIAL, AlgorithmManager.INDUSTRIAL].pick_random()
+	AlgorithmManager.add_node(pos, type, "name", 1.0)

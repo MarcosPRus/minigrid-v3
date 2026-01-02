@@ -4,13 +4,17 @@
 [ext_resource type="PackedScene" uid="uid://obvu4e5vhhgp" path="res://ui.tscn" id="2_e2o6t"]
 
 [node name="Game" type="Node2D"]
+z_index = -10
 script = ExtResource("1_80nbo")
+grid_line_color = Color(0.823529, 0.815686, 0.803922, 0.376471)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 
 [node name="NodesContainer" type="Node2D" parent="."]
+z_as_relative = false
 
 [node name="LinesContainer" type="Node2D" parent="."]
+z_as_relative = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

@@ -1,11 +1,11 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c0ewlf28anbr1"]
 
-[ext_resource type="Shader" uid="uid://bbmc7g8ghi5yi" path="res://wavy_line_test.gdshader" id="1_kv48x"]
+[ext_resource type="Shader" uid="uid://bbmc7g8ghi5yi" path="res://Tests/wavy_line_test.gdshader" id="1_kv48x"]
 
 [resource]
 shader = ExtResource("1_kv48x")
-shader_parameter/carga = 0.0
-shader_parameter/offset_animacion = 0.0
+shader_parameter/carga = 1.0
+shader_parameter/offset_animacion = -10.29
 shader_parameter/grosor_visual = 0.1
 shader_parameter/color_base = Color(0, 0.8, 1, 1)
 shader_parameter/color_sobrecarga = Color(1, 0.2, 0, 1)

@@ -10,6 +10,7 @@
 [node name="IndustrialNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_xcu2f")
 type = 5
+base_cap = 2
 is_consumer = true
 hourly_profile = ExtResource("2_qjqqa")
 metadata/_custom_type_script = "uid://02481mh4bwgd"

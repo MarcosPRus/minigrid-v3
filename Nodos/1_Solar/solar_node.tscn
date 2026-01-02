@@ -10,6 +10,7 @@
 [node name="SolarNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_20ba4")
 type = 1
+base_cap = 6
 is_generator = true
 hourly_profile = ExtResource("2_5tqe5")
 metadata/_custom_type_script = "uid://02481mh4bwgd"
