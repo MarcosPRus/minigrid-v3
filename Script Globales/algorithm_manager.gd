@@ -1,6 +1,6 @@
 extends Node2D
 
-signal grid_state_updated
+signal grid_state_updated(solver_state: mod_AStar2D)
 
 enum {SS, SC}
 enum {VIRTUAL, SOLAR, WIND, HYDRO, THERMAL, INDUSTRIAL, RESIDENTIAL}
@@ -48,6 +48,7 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 		save_node(new_node_id, pos, type, name_)
 		connect_nodes(SC, new_node_id, 1.0) # Demanda 1 por defecto (Demanda)
 	
+	update_grid()
 	return new_node_id
 
 
@@ -75,6 +76,7 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	LinesContainer.add_child(new_line)
 	
 	lines[new_line_id] = new_line
+	update_grid()
 	
 	print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
 	return new_line_id
@@ -107,7 +109,7 @@ func update_grid() -> void:
 	final_flows = Solver.solve()
 	
 	#update_flows(Solver.final_flows)
-	grid_state_updated.emit()
+	grid_state_updated.emit(Solver)
 
 
 #func update_flows(final_flows: Dictionary) -> void:	

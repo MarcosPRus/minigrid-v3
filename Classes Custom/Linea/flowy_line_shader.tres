@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://djahps5o47dcu"]
+
+[ext_resource type="Shader" uid="uid://7sy3a1nwgdje" path="res://Tests/flowy_line_test.gdshader" id="1_tohi0"]
+
+[resource]
+shader = ExtResource("1_tohi0")
+shader_parameter/color_low = Color(0.9, 0.9, 0.4, 1)
+shader_parameter/color_med = Color(1, 0.5, 0, 1)
+shader_parameter/color_high = Color(1, 0.1, 0.1, 1)
+shader_parameter/utilization = 0.0
+shader_parameter/flow_offset = -2.87
+shader_parameter/density = 5.0
+shader_parameter/pulse_width = 0.4
+shader_parameter/is_active = true

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bf3pt8mk36gcc"]
+
+[ext_resource type="Material" uid="uid://djahps5o47dcu" path="res://Classes Custom/Linea/flowy_line_shader.tres" id="1_p48w7"]
+[ext_resource type="Script" uid="uid://c8pdxcd8aakor" path="res://Tests/flowy_line_test.gd" id="3_qbl56"]
+
+[node name="WavyLineTest" type="Line2D"]
+material = ExtResource("1_p48w7")
+points = PackedVector2Array(14, 37, 52, 17, 118, 77, 172, 20)
+width = 5.0
+texture_mode = 2
+script = ExtResource("3_qbl56")

@@ -12,13 +12,13 @@ var capacity: int = 10
 var is_virtual: bool = false
 
 # Para la animación del shader
-var aux_flow: float = 0.0
-var offset: float = 0.0
-const ANIM_SPEED = 2.5
+var speed_mod: float = 0.25
+var current_speed: float = 0.0
+var current_flow_offset: float = 0.0
 
 var flow: float
 
-@onready var flow_label: Label = Label.new()
+#@onready var flow_label: Label = Label.new()
 
 
 func _ready() -> void:
@@ -36,44 +36,17 @@ func _ready() -> void:
 	print("[Line Debug] Points array: ", str(points_aux))
 	for point in points_aux:
 		add_point(point)
-		
-	#add_point(pos_a)
-	#add_point(pos_b)
+	
+	AlgorithmManager.grid_state_updated.connect(on_grid_state_updated)
 	apply_shader_and_theme()
 	#add_child(flow_label)
-
-
-func apply_shader_and_theme() -> void:
-	width = 20.0
-	z_index = -1
-	
-	texture = preload("res://Classes Custom/Linea/wavy_line_gradiend.tres")
-	#texture_mode = Line2D.LINE_TEXTURE_TILE
-	texture_mode = Line2D.LINE_TEXTURE_STRETCH
-	material = preload("res://Classes Custom/Linea/wavy_line_shader.tres")
-	material = material.duplicate()
-	material.set_shader_parameter("carga", 0.0)
-	
-	flow_label.add_theme_color_override("font_color", Color.DARK_RED)
-	flow_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	flow_label.add_theme_constant_override("shadow_outline_size", 2)
-	flow_label.global_position = (pos_a + pos_b)/2
-	flow_label.z_index = 10
-
 
 func _process(delta: float) -> void:
 	if not material: return
 	
-	aux_flow = move_toward(aux_flow, flow, delta * ANIM_SPEED)
-	var wave_speed = 2.0 + (aux_flow * 2.0)
-	offset += wave_speed * delta
-	# Para evitar que el offset crezca hasta el infinito
-	offset = fmod(offset, TAU)
-	
-	material.set_shader_parameter("carga", aux_flow/capacity)
-	material.set_shader_parameter("offset_animacion", offset)
-	
-	#flow_label.text = format_string % [flow, capacity]
+	current_flow_offset += current_speed * delta
+	current_flow_offset = fmod(current_flow_offset, 1.0)
+	material.set_shader_parameter("flow_offset", current_flow_offset)
 
 
 func update_capacity() -> void:
@@ -81,3 +54,36 @@ func update_capacity() -> void:
 		return
 	#capacity = randf_range(0.1, 2.0) ## TODO: DELETE THIS SHIT
 	AlgorithmManager.Solver.set_connection_capacity(id_a, id_b, capacity)
+
+func on_grid_state_updated(solver_state: mod_AStar2D) -> void:
+	flow = solver_state.net_flows[id]
+	update_shader()
+
+
+func apply_shader_and_theme() -> void:
+	z_index = -1
+	
+	## FLOWY LINE STYLE
+	texture_mode = Line2D.LINE_TEXTURE_STRETCH
+	material = preload("res://Classes Custom/Linea/flowy_line_shader.tres")
+	material = material.duplicate()
+	material.set_shader_parameter("is_active", false)
+	
+	#flow_label.add_theme_color_override("font_color", Color.DARK_RED)
+	#flow_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	#flow_label.add_theme_constant_override("shadow_outline_size", 2)
+	#flow_label.global_position = (pos_a + pos_b)/2
+	#flow_label.z_index = 10
+
+func update_shader() -> void:
+	if flow == 0.0:
+		material.set_shader_parameter("is_active", false)
+	else:
+		material.set_shader_parameter("is_active", true)
+	
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	var target_speed: float = flow * speed_mod
+	tween.tween_property(self, "current_speed", target_speed, .5)
+	tween.parallel().tween_property(material, "shader_parameter/utilization", flow/capacity, 0.5)

@@ -67,12 +67,12 @@ func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: in
 		BuildingManager.node_selected(self)
 
 
-func on_grid_state_updated() -> void:
+func on_grid_state_updated(solver_state: mod_AStar2D) -> void:
 	if is_generator:
-		node_state.generation = AlgorithmManager.final_flows[str(AlgorithmManager.SS)+"-"+str(id-1)]
+		node_state.generation = solver_state.final_flows[str(0)+"-"+str(id-1)]
 		update_gen_gui()
 	elif is_consumer:
-		node_state.consumption = AlgorithmManager.final_flows[str(AlgorithmManager.SC)+"-"+str(id)]
+		node_state.consumption = solver_state.final_flows[str(1)+"-"+str(id)]
 		update_cons_gui()
 	
 	node_gui_v3.update(node_state)

@@ -9,6 +9,7 @@ var G_copy: AStar2D
 var Caps: Dictionary = {}
 var Caps_copy: Dictionary = {}
 var final_flows: Dictionary = {}
+var net_flows: Dictionary = {}
 
 var min_cap
 var next_id: int = 0
@@ -45,14 +46,6 @@ func copy_G_into_G_copy() -> void:
 			# Verificamos que no estén ya conectados
 			if not G_copy.are_points_connected(id, target_id):
 				G_copy.connect_points(id, target_id, true)
-
-## Function used by the Algorithm Manager to add consumers to the graph
-func add_node(pos: Vector2, weight: float) -> int:
-	G.add_point(next_id, pos, weight)
-	
-	next_id += 1
-	return next_id-1
-
 
 #region Old functions
 func add_virtual(pos: Vector2i, weight: float) -> int:
@@ -95,6 +88,12 @@ func add_generator(pos: Vector2i, weight: float) -> int:
 	return next_id-2
 #endregion
 
+## Function used by the Algorithm Manager to add nodes to the graph
+func add_node(pos: Vector2, weight: float) -> int:
+	G.add_point(next_id, pos, weight)
+	
+	next_id += 1
+	return next_id-1
 
 ## Function used by the Algorithm Manager to add lines to the graph
 ## Also used internally to connect to Virtual Nodes
@@ -112,8 +111,15 @@ func add_line(id_a: int, id_b: int, cap: float) -> String:
 	return connection_id
 
 
+func reset_flows():
+	net_flows.clear()
+	for key in Caps.keys():
+		net_flows[key] = 0.0
+
+
 func solve() -> Dictionary:
 	copy_G_into_G_copy()
+	reset_flows()
 	Caps_copy = Caps.duplicate()
 	
 	var next_path = G_copy.get_id_path(SS, SC, false)
@@ -159,15 +165,24 @@ func reduce_capacity_along_path(path: PackedInt64Array, cap: float) -> void:
 		var line_id_1 = str(path[i]) + "-" + str(path[i+1])
 		var line_id_2 = str(path[i+1]) + "-" + str(path[i])
 		# TODO: Tiene que haber una mejor forma de hacer esto
+		# TODO: La hay, cambiar por ids numéricos (ej: id_a * 1000 + id_b)
 		if Caps_copy.has(line_id_1):
+			# Reducimos la capacidad
 			Caps_copy[line_id_1] -= cap
+			# Y registramos la dirección
+			net_flows[line_id_1] += cap
+			
 			print("[Mod A* Debug] Capacity along ", str(path[i]), "-", str(path[i+1]), " reduced by ", str(cap))
 			if Caps_copy[line_id_1] <= 0:
 				G_copy.disconnect_points(path[i], path[i+1])
 				print("[Mod A* Debug] Segment ", str(path[i]), "-", str(path[i+1]), " removed ")
 		
 		elif Caps_copy.has(line_id_2):
+			# Reducimos la capacidad
 			Caps_copy[line_id_2] -= cap
+			# Y registramos la dirección
+			net_flows[line_id_2] -= cap
+			
 			print("[Mod A* Debug] Capacity along ", str(path[i]), "-", str(path[i+1]), " reduced by ", str(cap))
 			if Caps_copy[line_id_2] <= 0:
 				G_copy.disconnect_points(path[i], path[i+1])
