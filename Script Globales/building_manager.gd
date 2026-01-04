@@ -14,7 +14,7 @@ var connecting_node: GridNode
 var city_names = ["Madrid", "Barcelona", "Sevilla", "Valencia"]
 
 var building_grid_size: Vector2 = Vector2(64,64)
-@onready var building_grid: AStar2D = AStar2D.new()
+var building_grid: AStarGrid2D = AStarGrid2D.new()
 
 func _ready() -> void:
 	initialize_building_grid()
@@ -27,14 +27,13 @@ func _process(delta: float) -> void:
 
 
 func initialize_building_grid() -> void:
-	var id: int = 1
-	for i in range(1+int(1920/building_grid_size.x)):
-		for j in range(1+int(1080/building_grid_size.y)):
-			var pos := Vector2(i*building_grid_size.x, j*building_grid_size.y)
-			building_grid.add_point(id, pos)
-			building_grid.connect_points(id, id-1)
-			print("[Bulding Manager Debug] Building grid point ", str(id), " created at:   ", str(pos))
-			id += 1
+	building_grid.region = Rect2i(0, 0, 32, 32)
+	building_grid.cell_size = Vector2(64, 64)
+	building_grid.jumping_enabled = true
+	#building_grid.set_default_compute_heuristic
+	#building_grid.set_default_estimate_heuristic
+	building_grid.update()
+
 
 func button_pressed(type: int) -> void:
 	previewing_type = type

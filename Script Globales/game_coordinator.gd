@@ -1,6 +1,6 @@
 extends Node2D
 
-const appearance_chance: float = 0.05
+const appearance_chance: float = 0.1
 
 var hour: int = 0
 var day: int = 1
@@ -41,6 +41,6 @@ func _on_timer_timeout() -> void:
 
 
 func spawn_consumer() -> void:
-	var pos = Vector2(randi_range(200,1720), randi_range(200,880))
+	var pos = snapped(Vector2(randi_range(200,1720), randi_range(200,880)), BuildingManager.building_grid_size)
 	var type = [AlgorithmManager.RESIDENTIAL, AlgorithmManager.INDUSTRIAL].pick_random()
 	AlgorithmManager.add_node(pos, type, "name", 1.0)

@@ -7,7 +7,7 @@ var NodesContainer: Node2D
 var LinesContainer: Node2D
 var Solver: mod_AStar2D
 
-var nodes: Dictionary[int,GridNode] = {}
+var nodes: Dictionary[int, GridNode] = {}
 var lines: Dictionary[String, GridLine] = {}
 
 
@@ -92,13 +92,13 @@ func update_consumer_state(node_id: int, new_demand: int) -> void:
 
 func update_grid() -> void:
 	for l in lines.values():
-		l.update_params()
+		l.update_capacity()
 	
 	# TODO: Cambiar esto a ejecución por grupos, primero los consumidores,
 	# luego los generadores inflexibles, luego los generadores flexibles,
 	# y por último el almacenamiento.
 	for n in nodes.values():
-		n.update_params()
+		n.update_capacity()
 	
 	Solver.solve()
 	
