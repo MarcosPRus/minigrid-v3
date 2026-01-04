@@ -1,18 +1,24 @@
-[gd_scene load_steps=7 format=3 uid="uid://bdvp74k3cdwp1"]
+[gd_scene load_steps=9 format=3 uid="uid://bdvp74k3cdwp1"]
 
 [ext_resource type="Script" uid="uid://dw8w6ansk68qb" path="res://Nodos/4_Thermal/thermal_node.gd" id="1_g4avy"]
 [ext_resource type="Curve" uid="uid://b4g10fm0t7dei" path="res://Hourly Profiles/constant_profile.tres" id="2_g4avy"]
 [ext_resource type="PackedScene" uid="uid://b7oiiibwroklk" path="res://Node Components/click_area.tscn" id="3_bhp6a"]
+[ext_resource type="Script" uid="uid://mg8afl5x74rm" path="res://Resources/node_state.gd" id="3_vjfri"]
 [ext_resource type="PackedScene" uid="uid://be2i477khatdn" path="res://Node Components/node_gui.tscn" id="4_rnjos"]
 [ext_resource type="PackedScene" uid="uid://bmdhnea25lty5" path="res://Node Components/node_gui_v2.tscn" id="5_m5kdw"]
 [ext_resource type="PackedScene" uid="uid://dc1d3diodqhhy" path="res://Node Components/node_gui_v3.tscn" id="6_dq07e"]
 
+[sub_resource type="Resource" id="Resource_w5k0u"]
+script = ExtResource("3_vjfri")
+base_cap = 3
+metadata/_custom_type_script = "uid://mg8afl5x74rm"
+
 [node name="ThermalNode" type="Node2D" groups=["Flexible Generators"]]
 script = ExtResource("1_g4avy")
 type = 4
-base_cap = 4
 is_generator = true
 hourly_profile = ExtResource("2_g4avy")
+node_state = SubResource("Resource_w5k0u")
 metadata/_custom_type_script = "uid://02481mh4bwgd"
 
 [node name="ClickArea" parent="." instance=ExtResource("3_bhp6a")]

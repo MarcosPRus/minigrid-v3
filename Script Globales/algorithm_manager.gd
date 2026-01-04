@@ -1,5 +1,7 @@
 extends Node2D
 
+signal grid_state_updated
+
 enum {SS, SC}
 enum {VIRTUAL, SOLAR, WIND, HYDRO, THERMAL, INDUSTRIAL, RESIDENTIAL}
 
@@ -9,6 +11,8 @@ var Solver: mod_AStar2D
 
 var nodes: Dictionary[int, GridNode] = {}
 var lines: Dictionary[String, GridLine] = {}
+
+var final_flows: Dictionary = {}
 
 
 func _ready() -> void:
@@ -76,7 +80,7 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	return new_line_id
 
 
-func update_generator_state(node_id: int, new_cap: int, new_cost: float) -> void:
+func update_generator_capacity(node_id: int, new_cap: int, new_cost: float) -> void:
 	# Un generador modifica su capacidad máxima de generación
 	# modificando la capacidad de la línea que conecta el SS con el generador virtual
 	Solver.set_connection_capacity(SS, node_id-1, new_cap)
@@ -84,7 +88,7 @@ func update_generator_state(node_id: int, new_cap: int, new_cost: float) -> void
 	Solver.set_point_weight_scale(node_id - 1, new_cost) # El nodo generador virtual siempre tiene el id del generador -1
 
 
-func update_consumer_state(node_id: int, new_demand: int) -> void:
+func update_consumer_capacity(node_id: int, new_demand: int) -> void:
 	# Un consumidor modifica su demanda modificando la capacidad
 	# de la línea que conecta el SC con el consumidor
 	Solver.set_connection_capacity(SC, node_id, new_demand)
@@ -100,23 +104,24 @@ func update_grid() -> void:
 	for n in nodes.values():
 		n.update_capacity()
 	
-	Solver.solve()
+	final_flows = Solver.solve()
 	
-	update_flows(Solver.final_flows)
+	#update_flows(Solver.final_flows)
+	grid_state_updated.emit()
 
 
-func update_flows(final_flows: Dictionary) -> void:	
-	print("Final flows: ")
-	for l in lines.values():
-		l.flow = final_flows[l.id]
-		print(l.id, ": ", final_flows[l.id])
-	
-	for n in nodes.values():
-		if n.is_generator:
-			var gen: float = final_flows[str(SS)+"-"+str(n.id-1)]
-			var cap: float = Solver.Caps[str(SS)+"-"+str(n.id-1)]
-			n.update_gen_gui(gen, cap)
-		elif n.is_consumer:
-			var dem_sat: float = final_flows[str(SC)+"-"+str(n.id)]
-			var dem_tot: float = Solver.Caps[str(SC)+"-"+str(n.id)]
-			n.update_cons_gui(dem_sat, dem_tot)
+#func update_flows(final_flows: Dictionary) -> void:	
+	#print("Final flows: ")
+	#for l in lines.values():
+		#l.flow = final_flows[l.id]
+		#print(l.id, ": ", final_flows[l.id])
+	#
+	#for n in nodes.values():
+		#if n.is_generator:
+			#var gen: float = final_flows[str(SS)+"-"+str(n.id-1)]
+			#var cap: float = Solver.Caps[str(SS)+"-"+str(n.id-1)]
+			#n.update_gen_gui(gen, cap)
+		#elif n.is_consumer:
+			#var dem_sat: float = final_flows[str(SC)+"-"+str(n.id)]
+			#var dem_tot: float = Solver.Caps[str(SC)+"-"+str(n.id)]
+			#n.update_cons_gui(dem_sat, dem_tot)

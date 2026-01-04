@@ -18,6 +18,7 @@ func _ready() -> void:
 	#color_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	color_rect.custom_minimum_size = rect_min_size
 
+
 func setup(base_cap: int) -> void:
 	# Limpiar hijos previos si reutilizas el nodo
 	for child in get_children():
@@ -26,13 +27,23 @@ func setup(base_cap: int) -> void:
 	columns = min(base_cap, columns)
 	add_rects(base_cap)
 
+
 func add_rects(num: int) -> void:
 	for r in range(num):
 		var new_rect: ColorRect = color_rect.duplicate()
 		add_child(new_rect)
 		rects.append(new_rect)
 
-func update_generation(val: int, max: int, disp: float) -> void:
+
+func update(node_state: NodeState) -> void:
+	pass
+
+
+func update_generation(node_state: NodeState) -> void:
+	var val = node_state.generation
+	var max = node_state.base_cap
+	var disp = node_state.disp
+	
 	for i in range(rects.size()):
 		if i < val:
 			rects[i].color = COLOR_ACTIVE
@@ -41,8 +52,13 @@ func update_generation(val: int, max: int, disp: float) -> void:
 		else:
 			rects[i].color = COLOR_INACTIVE
 
-func update_consumption(val: int, max: int, disp: float) -> void:
+
+func update_consumption(node_state: NodeState) -> void:
+	var val = node_state.consumption
+	var max = node_state.base_cap
+	var disp = node_state.disp
 	var demand_insatisfied: bool = val < max * disp
+	
 	for i in range(rects.size()):
 		if i < val:
 			if demand_insatisfied:

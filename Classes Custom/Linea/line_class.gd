@@ -76,7 +76,7 @@ func _process(delta: float) -> void:
 	#flow_label.text = format_string % [flow, capacity]
 
 
-func update_params() -> void:
+func update_capacity() -> void:
 	if is_virtual:
 		return
 	#capacity = randf_range(0.1, 2.0) ## TODO: DELETE THIS SHIT

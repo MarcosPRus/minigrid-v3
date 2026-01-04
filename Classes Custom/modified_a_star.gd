@@ -112,7 +112,7 @@ func add_line(id_a: int, id_b: int, cap: float) -> String:
 	return connection_id
 
 
-func solve() -> void:
+func solve() -> Dictionary:
 	copy_G_into_G_copy()
 	Caps_copy = Caps.duplicate()
 	
@@ -134,6 +134,8 @@ func solve() -> void:
 	# un nuevo estado de la red
 	for line in Caps.keys():
 		final_flows[line] = Caps[line] - Caps_copy[line]
+	
+	return final_flows
 
 
 func get_bottleneck_capacity(path: PackedInt64Array) -> float:

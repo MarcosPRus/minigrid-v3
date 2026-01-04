@@ -23,7 +23,9 @@ func _ready() -> void:
 		#$ProgressBar.add_theme_stylebox_override("fill", style_box)
 
 
-func update_progress_bar(val: float, max: float) -> void:
+func update_progress_bar(node_state: NodeState) -> void:
+	var val = node_state.generation + node_state.consumption
+	var max = node_state.base_cap
 	$Label.text = format_string % [val, max]
 
 	if tween_val:

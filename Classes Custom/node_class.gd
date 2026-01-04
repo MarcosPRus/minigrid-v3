@@ -1,19 +1,12 @@
 class_name GridNode
 extends Node2D
 
-signal node_ready(node_state: NodeState)
-signal capacity_changed
 
 static var total_consumption: float
 static var total_generation: float
 
-var total_energy_gen: float = 0.0
-var total_energy_con: float = 0.0
-
 var id: int
 @export var type: int
-
-@export var base_cap: int = 5
 
 @export var is_virtual: bool = false
 @export var is_generator: bool = false
@@ -21,7 +14,7 @@ var id: int
 
 @export var hourly_profile: Curve
 
-var node_state: NodeState = NodeState.new()
+@export var node_state: NodeState
 
 @onready var click_area: Area2D = $ClickArea
 @onready var node_gui: Control = $NodeGUI
@@ -29,6 +22,7 @@ var node_state: NodeState = NodeState.new()
 @onready var node_gui_v3: NodeGUIv3 = $NodeGUIv3
 
 
+# Helper function to easily add node scenes to the tree (constructor?
 static func add_node_scene(new_node_id: int, pos: Vector2, type: int, name_: String) -> GridNode:
 	var node_scenes := [load("res://Nodos/0_Virtual/virtual_node.tscn"), \
 						load("res://Nodos/1_Solar/solar_node.tscn"), \
@@ -49,9 +43,9 @@ func _ready() -> void:
 	if type == AlgorithmManager.VIRTUAL:
 		return
 	
+	AlgorithmManager.grid_state_updated.connect(on_grid_state_updated)
 	click_area.input_event.connect(_on_click_area_input_event)
-	node_ready.emit(node_state)
-	node_gui_v3.setup(base_cap)
+	node_gui_v3.setup(node_state.base_cap)
 
 
 func update_capacity() -> void:
@@ -59,12 +53,13 @@ func update_capacity() -> void:
 		return
 	
 	# TODO: Implementar calculo de nuevos parámetros según hora y parámetros ambientales
-	var aux_value: int = ceil(base_cap * hourly_profile.sample(GameCoordinator.hour))
+	var new_cap: int = ceil(node_state.base_cap * hourly_profile.sample(GameCoordinator.hour))
+	node_state.disp = new_cap / node_state.base_cap
 	
 	if is_generator:
-		AlgorithmManager.update_generator_state(id, aux_value, BuildingManager.weights[type])
+		AlgorithmManager.update_generator_capacity(id, new_cap, BuildingManager.weights[type])
 	else:
-		AlgorithmManager.update_consumer_state(id, aux_value)
+		AlgorithmManager.update_consumer_capacity(id, new_cap)
 
 
 func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: int):
@@ -72,13 +67,24 @@ func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: in
 		BuildingManager.node_selected(self)
 
 
-func update_gen_gui(gen: float, cap: float) -> void:	
-	node_gui.update_progress_bar(gen, cap)
-	node_gui_v2.update_shader(gen, base_cap, cap/base_cap)
-	node_gui_v3.update_generation(gen, base_cap, cap/base_cap)
+func on_grid_state_updated() -> void:
+	if is_generator:
+		node_state.generation = AlgorithmManager.final_flows[str(AlgorithmManager.SS)+"-"+str(id-1)]
+		update_gen_gui()
+	elif is_consumer:
+		node_state.consumption = AlgorithmManager.final_flows[str(AlgorithmManager.SC)+"-"+str(id)]
+		update_cons_gui()
+	
+	node_gui_v3.update(node_state)
 
 
-func update_cons_gui(dem_sat: float, dem_tot: float) -> void:
-	node_gui.update_progress_bar(dem_sat, dem_tot)
-	node_gui_v2.update_shader(dem_sat, base_cap, dem_tot/base_cap)
-	node_gui_v3.update_consumption(dem_sat, base_cap, dem_tot/base_cap)
+func update_gen_gui() -> void:	
+	node_gui.update_progress_bar(node_state)
+	node_gui_v2.update_shader(node_state)
+	node_gui_v3.update_generation(node_state)
+
+
+func update_cons_gui() -> void:
+	node_gui.update_progress_bar(node_state)
+	node_gui_v2.update_shader(node_state)
+	node_gui_v3.update_consumption(node_state)
