@@ -1,6 +1,6 @@
 extends Node2D
 
-const appearance_chance: float = 0.1
+const appearance_chance: float = 0.15
 
 var hour: int = 0
 var day: int = 1
@@ -8,6 +8,9 @@ var month: int = 1
 var year: int = 2000
 
 var UI: UI
+
+var trys_count: int = 0
+var trys_max: int = 15
 
 @onready var hour_timer: Timer = Timer.new()
 
@@ -41,6 +44,17 @@ func _on_timer_timeout() -> void:
 
 
 func spawn_consumer() -> void:
-	var pos = snapped(Vector2(randi_range(200,1720), randi_range(200,880)), BuildingManager.building_grid_size)
+	if trys_count >= trys_max:
+		return
+	
+	var pos: Vector2i = snapped(Vector2i(randi_range(200,1720), randi_range(200,880)), BuildingManager.building_grid_size)
 	var type = [AlgorithmManager.RESIDENTIAL, AlgorithmManager.INDUSTRIAL].pick_random()
-	AlgorithmManager.add_node(pos, type, "name", 1.0)
+	var id: int = AlgorithmManager.add_node(pos, type, "name", 1.0)
+	
+	# Si recibimos un -1, es que la posición está ocupada, volvemos a intentarlo
+	# Limitamos el número de intentos para evitar crashear si no quedan huecos libres.
+	if id == -1:
+		spawn_consumer()
+		trys_count += 1
+	else:
+		trys_count = 0

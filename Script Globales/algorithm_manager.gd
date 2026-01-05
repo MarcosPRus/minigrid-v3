@@ -24,7 +24,12 @@ func _ready() -> void:
 	assert(SS == 0 and SC == 1, "SS and SC IDs are incorrect!")
 
 
-func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int:
+func add_node(pos: Vector2i, type: int, name_:String, weight: float = 1.0) -> int:
+	# Comprobamos que no haya nodos o líneas solapadas (solo para nodos y líneas reales)
+	if type != VIRTUAL and is_position_occupied(pos):
+		print("[AlgorithmManager Debug] Error: Node overlaps with existing node at ", pos)
+		return -1 # Retornamos ID inválido
+	
 	# Creamos el id del nuevo nodo
 	var new_node_id: int = -1
 	var virt_node_id: int = -1
@@ -34,7 +39,7 @@ func add_node(pos: Vector2, type: int, name_:String, weight: float = 1.0) -> int
 		save_node(new_node_id, pos, type, name_)
 	elif type <= THERMAL: # Si es un generador
 		# Añadimos el generador virtual
-		virt_node_id = add_node(pos-Vector2(128, 0), VIRTUAL, name_+"_v", weight)
+		virt_node_id = add_node(pos-Vector2i(128, 0), VIRTUAL, name_+"_v", weight)
 		# Añadimos el nodo real con peso 1
 		new_node_id = Solver.add_node(pos, 1.0)
 		save_node(new_node_id, pos, type, name_)
@@ -67,18 +72,29 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	# Obtenemos el id de la linea, añadiendola al Solver
 	var new_line_id = Solver.add_line(id_a, id_b, capacity)
 	# Creamos la instancia de la línea, y la añadimos al diccionario de líneas
-	var new_line: GridLine = GridLine.new()
-	new_line.id = new_line_id
-	new_line.id_a = id_a
-	new_line.pos_a = nodes[id_a].global_position
-	new_line.id_b = id_b
-	new_line.pos_b = nodes[id_b].global_position
-	LinesContainer.add_child(new_line)
-	
-	lines[new_line_id] = new_line
+	# 2. Lógica Visual (Routing)
+	if nodes[id_a].type == VIRTUAL or nodes[id_b].type == VIRTUAL:
+		return "virtual"
+	else:
+		var new_line: GridLine = GridLine.new()
+		
+		var start_pos = nodes[id_a].global_position
+		var end_pos = nodes[id_b].global_position
+		# Obtenemos el camino visual esquivando obstáculos
+		var visual_path = BuildingManager.get_line_path(start_pos, end_pos)
+		new_line.points = visual_path # Asignamos los puntos a la Line2D
+		
+		new_line.id = new_line_id
+		new_line.id_a = id_a
+		new_line.pos_a = nodes[id_a].global_position
+		new_line.id_b = id_b
+		new_line.pos_b = nodes[id_b].global_position
+		LinesContainer.add_child(new_line)
+		
+		lines[new_line_id] = new_line
+		print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
+		
 	update_grid()
-	
-	print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
 	return new_line_id
 
 
@@ -127,3 +143,25 @@ func update_grid() -> void:
 			#var dem_sat: float = final_flows[str(SC)+"-"+str(n.id)]
 			#var dem_tot: float = Solver.Caps[str(SC)+"-"+str(n.id)]
 			#n.update_cons_gui(dem_sat, dem_tot)
+
+
+func is_position_occupied(target_pos: Vector2i, node_radius: float = 48.0, line_radius: int = 2) -> bool:
+	## Comprobación de nodos
+	# Ignoramos nodos virtuales y SS y SC porque están en -10000, -10000
+	for node in nodes.values():
+		if !node.is_virtual:
+			if node.global_position.distance_to(target_pos) < node_radius:
+				return true
+	## Comprobación de líneas
+	# Convertimos la posición de mundo a la celda central de la rejilla visual
+	var center_id = Vector2i(target_pos / BuildingManager.lines_grid_size)
+	# Escaneamos el área que ocupará el nodo
+	for x in range(-line_radius, line_radius+1):
+		for y in range(-line_radius, line_radius+1):
+			var cell = center_id + Vector2i(x, y)
+			# CHECK CLAVE:
+			# Si el peso es mayor al default (1.0), significa que hay un cable ahí.
+			# O si es sólido, hay un edificio (redundante pero seguro).
+			if BuildingManager.lines_grid.get_point_weight_scale(cell) > 1.1 or BuildingManager.lines_grid.is_point_solid(cell):
+				return true
+	return false

@@ -9,7 +9,6 @@ var id_b: int
 var pos_a: Vector2
 var pos_b: Vector2
 var capacity: int = 10
-var is_virtual: bool = false
 
 # Para la animación del shader
 var speed_mod: float = 0.25
@@ -22,21 +21,7 @@ var flow: float
 
 
 func _ready() -> void:
-	## Initial configuration
-	# Avoid drawing lines that connect virtual nodes
-	if AlgorithmManager.nodes[id_a].type == 0 or AlgorithmManager.nodes[id_b].type == 0:
-		is_virtual = true
-		return
-	
-	var a: Vector2i = Vector2i(pos_a/BuildingManager.building_grid_size)
-	var b: Vector2i = Vector2i(pos_b/BuildingManager.building_grid_size)
-	print("[Line Debug] (A) Closest grid point to ", str(pos_a), " is ", str(a))
-	print("[Line Debug] (B) Closest grid point to ", str(pos_b), " is ", str(b))
-	var points_aux := BuildingManager.building_grid.get_point_path(a, b)
-	print("[Line Debug] Points array: ", str(points_aux))
-	for point in points_aux:
-		add_point(point)
-	
+	## Initial configuration	
 	AlgorithmManager.grid_state_updated.connect(on_grid_state_updated)
 	apply_shader_and_theme()
 	#add_child(flow_label)
@@ -50,9 +35,7 @@ func _process(delta: float) -> void:
 
 
 func update_capacity() -> void:
-	if is_virtual:
-		return
-	#capacity = randf_range(0.1, 2.0) ## TODO: DELETE THIS SHIT
+	## TODO: Implementar outages, reducciones de capacidad, etc
 	AlgorithmManager.Solver.set_connection_capacity(id_a, id_b, capacity)
 
 func on_grid_state_updated(solver_state: mod_AStar2D) -> void:
@@ -62,9 +45,10 @@ func on_grid_state_updated(solver_state: mod_AStar2D) -> void:
 
 func apply_shader_and_theme() -> void:
 	z_index = -1
+	width = 5
 	
 	## FLOWY LINE STYLE
-	texture_mode = Line2D.LINE_TEXTURE_STRETCH
+	texture_mode = Line2D.LINE_TEXTURE_TILE
 	material = preload("res://Classes Custom/Linea/flowy_line_shader.tres")
 	material = material.duplicate()
 	material.set_shader_parameter("is_active", false)
