@@ -152,16 +152,16 @@ func is_position_occupied(target_pos: Vector2i, node_radius: float = 48.0, line_
 		if !node.is_virtual:
 			if node.global_position.distance_to(target_pos) < node_radius:
 				return true
+	
 	## Comprobación de líneas
 	# Convertimos la posición de mundo a la celda central de la rejilla visual
-	var center_id = Vector2i(target_pos / BuildingManager.lines_grid_size)
+	var center_id = Vector2i(target_pos / BuildingManager.blg_grid_size)
 	# Escaneamos el área que ocupará el nodo
 	for x in range(-line_radius, line_radius+1):
 		for y in range(-line_radius, line_radius+1):
 			var cell = center_id + Vector2i(x, y)
 			# CHECK CLAVE:
-			# Si el peso es mayor al default (1.0), significa que hay un cable ahí.
-			# O si es sólido, hay un edificio (redundante pero seguro).
-			if BuildingManager.lines_grid.get_point_weight_scale(cell) > 1.1 or BuildingManager.lines_grid.is_point_solid(cell):
+			# Si es sólido, hay un edificio.
+			if BuildingManager.blg_grid.is_point_solid(cell):
 				return true
 	return false

@@ -47,7 +47,7 @@ func spawn_consumer() -> void:
 	if trys_count >= trys_max:
 		return
 	
-	var pos: Vector2i = snapped(Vector2i(randi_range(200,1720), randi_range(200,880)), BuildingManager.building_grid_size)
+	var pos: Vector2i = snapped(Vector2i(randi_range(100,1820), randi_range(100,980)), BuildingManager.blg_grid_size)
 	var type = [AlgorithmManager.RESIDENTIAL, AlgorithmManager.INDUSTRIAL].pick_random()
 	var id: int = AlgorithmManager.add_node(pos, type, "name", 1.0)
 	
