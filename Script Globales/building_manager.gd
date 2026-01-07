@@ -36,7 +36,7 @@ func initialize_blg_grid() -> void:
 	
 	blg_grid.default_compute_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
 	blg_grid.default_estimate_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
-	#lines_grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	blg_grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ALWAYS
 	
 	blg_grid.update()
 
@@ -59,12 +59,13 @@ func left_click(pos: Vector2) -> void:
 	# se pisen nodos y líneas no conectados
 	else:
 		var center_cell: Vector2i = Vector2i(snapped_pos/blg_grid_size)
-		for x in range(-2, 3):
-			for y in range(-2, 3):
+		for x in range(-1, 2):
+			for y in range(-1, 2):
 				var cell = center_cell + Vector2i(x, y)
-				blg_grid.set_point_solid(cell, true)
+				#blg_grid.set_point_solid(cell, true)
+				blg_grid.set_point_weight_scale(cell, 10.0)
 				
-		blg_grid.set_point_solid(center_cell, false)
+		#blg_grid.set_point_solid(center_cell, false)
 		idle()
 
 func right_click() -> void:
@@ -120,6 +121,7 @@ func get_line_path(from: Vector2i, to: Vector2i) -> PackedVector2Array:
 			continue
 		
 		# Bloquemas la celda
-		blg_grid.set_point_solid(cell_id, true)
+		#blg_grid.set_point_solid(cell_id, true)
+		blg_grid.set_point_weight_scale(cell_id, 10.0)
 	
 	return point_path

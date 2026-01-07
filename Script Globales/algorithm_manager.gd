@@ -145,7 +145,7 @@ func update_grid() -> void:
 			#n.update_cons_gui(dem_sat, dem_tot)
 
 
-func is_position_occupied(target_pos: Vector2i, node_radius: float = 48.0, line_radius: int = 2) -> bool:
+func is_position_occupied(target_pos: Vector2i, node_radius: float = 96.0, line_radius: int = 1) -> bool:
 	## Comprobación de nodos
 	# Ignoramos nodos virtuales y SS y SC porque están en -10000, -10000
 	for node in nodes.values():
@@ -161,7 +161,7 @@ func is_position_occupied(target_pos: Vector2i, node_radius: float = 48.0, line_
 		for y in range(-line_radius, line_radius+1):
 			var cell = center_id + Vector2i(x, y)
 			# CHECK CLAVE:
-			# Si es sólido, hay un edificio.
-			if BuildingManager.blg_grid.is_point_solid(cell):
+			# Si es sólido, o tiene mucho peso, hay un edificio.
+			if BuildingManager.blg_grid.get_point_weight_scale(cell) >= 5.0 or BuildingManager.blg_grid.is_point_solid(cell):
 				return true
 	return false
