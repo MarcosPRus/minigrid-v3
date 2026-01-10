@@ -77,7 +77,7 @@ func node_selected(node: GridNode) -> void:
 		connecting_node = node
 	elif state == states.LINE_PREVIEW:
 		if node != connecting_node:
-			AlgorithmManager.connect_nodes(connecting_node.id, node.id, 1.0)
+			AlgorithmManager.connect_nodes(connecting_node.id, node.id, 10.0)
 			connecting_node = null
 			idle()
 

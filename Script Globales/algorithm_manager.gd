@@ -76,27 +76,31 @@ func connect_nodes(id_a: int, id_b: int, capacity: float) -> String:
 	if nodes[id_a].type == VIRTUAL or nodes[id_b].type == VIRTUAL:
 		return "virtual"
 	else:
-		var new_line: GridLine = GridLine.new()
-		
-		var start_pos = nodes[id_a].global_position
-		var end_pos = nodes[id_b].global_position
-		# Obtenemos el camino visual esquivando obstáculos
-		var visual_path = BuildingManager.get_line_path(start_pos, end_pos)
-		new_line.points = visual_path # Asignamos los puntos a la Line2D
-		
-		new_line.id = new_line_id
-		new_line.id_a = id_a
-		new_line.pos_a = nodes[id_a].global_position
-		new_line.id_b = id_b
-		new_line.pos_b = nodes[id_b].global_position
-		LinesContainer.add_child(new_line)
-		
-		lines[new_line_id] = new_line
-		print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ", str(new_line))
+		save_line(new_line_id, id_a, id_b, capacity)
+		print("[AlgorithmManager Debug] New line (", new_line_id, ") created!: ")
 		
 	update_grid()
 	return new_line_id
 
+
+func save_line(new_line_id: String, id_a: int, id_b: int, capacity: float) -> void:
+	var new_line: GridLine = GridLine.new()
+	
+	var start_pos = nodes[id_a].global_position
+	var end_pos = nodes[id_b].global_position
+	# Obtenemos el camino visual esquivando obstáculos
+	var visual_path = BuildingManager.get_line_path(start_pos, end_pos)
+	new_line.points = visual_path # Asignamos los puntos a la Line2D
+	
+	new_line.id = new_line_id
+	new_line.id_a = id_a
+	new_line.pos_a = nodes[id_a].global_position
+	new_line.id_b = id_b
+	new_line.pos_b = nodes[id_b].global_position
+	new_line.capacity = capacity
+	LinesContainer.add_child(new_line)
+	
+	lines[new_line_id] = new_line
 
 func update_generator_capacity(node_id: int, new_cap: int, new_cost: float) -> void:
 	# Un generador modifica su capacidad máxima de generación
