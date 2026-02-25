@@ -43,28 +43,25 @@ func _ready() -> void:
 	if type == AlgorithmManager.VIRTUAL:
 		return
 	
-	AlgorithmManager.grid_state_updated.connect(on_grid_state_updated)
 	click_area.input_event.connect(_on_click_area_input_event)
 	node_gui_v3.setup(node_state.base_cap)
 
 
-func update_capacity() -> void:
+func update_capacity(weather_state: WeatherState) -> int:
 	if is_virtual:
-		return
+		return -1
 	
 	# TODO: Implementar calculo de nuevos parámetros según hora y parámetros ambientales
-	var new_cap: int = ceil(node_state.base_cap * hourly_profile.sample(GameCoordinator.hour))
+	var new_cap: int = ceil(node_state.base_cap * hourly_profile.sample(weather_state.hour))
 	node_state.disp = new_cap / node_state.base_cap
 	
-	if is_generator:
-		AlgorithmManager.update_generator_capacity(id, new_cap, BuildingManager.weights[type])
-	else:
-		AlgorithmManager.update_consumer_capacity(id, new_cap)
+	return new_cap
 
 
 func _on_click_area_input_event(viewport: Node, event: InputEvent, shape_idx: int):
 	if event.is_action_released("left_click"):
-		BuildingManager.node_selected(self)
+		Events.node_clicked.emit(self)
+		#BuildingManager.node_selected(self)
 
 
 func on_grid_state_updated(solver_state: mod_AStar2D) -> void:

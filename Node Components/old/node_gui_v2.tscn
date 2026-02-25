@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bmdhnea25lty5"]
 
 [ext_resource type="Shader" uid="uid://b4mn6gkh3aynm" path="res://Nodos/grid_node.gdshader" id="1_nakum"]
-[ext_resource type="Script" uid="uid://brn7n1bs8qsqf" path="res://Node Components/node_gui_v_2.gd" id="2_nnuug"]
+[ext_resource type="Script" uid="uid://brn7n1bs8qsqf" path="res://Node Components/old/node_gui_v_2.gd" id="2_nnuug"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cb3qi"]
 shader = ExtResource("1_nakum")

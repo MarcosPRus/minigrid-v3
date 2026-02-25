@@ -18,7 +18,7 @@ uniform bool is_active = true;
 void fragment() {
     // 1. CÁLCULO DEL COLOR BASE (GRADIENTE)
     vec4 base_color;
-    
+
     if (utilization < 0.5) {
         // Interpolar Amarillo -> Naranja
         base_color = mix(color_low, color_med, utilization * 2.0);
@@ -36,17 +36,17 @@ void fragment() {
         // CÁLCULO DE MOVIMIENTO SUAVE
         // Usamos flow_offset en lugar de TIME
         float moving_uv = (UV.x * density) - flow_offset;
-        
+
         // Crear el patrón repetitivo
         float pattern = fract(moving_uv);
-        
+
         // Suavizar bordes del pulso
         float glow = smoothstep(0.0, pulse_width, pattern) * smoothstep(1.0, 1.0 - pulse_width, pattern);
-        
+
         // Calcular transparencia final
-        float base_alpha = 0.3 + (utilization * 0.4); 
+        float base_alpha = 0.3 + (utilization * 0.4);
         float final_alpha = max(base_alpha, glow);
-        
+
         // Salida final
         COLOR = vec4(base_color.rgb, final_alpha * base_color.a);
     }

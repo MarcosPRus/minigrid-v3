@@ -1,13 +1,12 @@
+class_name GameCoordinator
 extends Node2D
 
 const appearance_chance: float = 0.15
 
-var hour: int = 0
-var day: int = 1
-var month: int = 1
-var year: int = 2000
+var weather_state: WeatherState = WeatherState.new()
 
-var UI: UI
+var ui_ref: Control
+var algorithm_manager_ref: AlgorithmManager
 
 var trys_count: int = 0
 var trys_max: int = 15
@@ -24,20 +23,20 @@ func _ready() -> void:
 
 
 func _on_timer_timeout() -> void:
-	hour += 1
-	if hour > 23:
-		hour = 0
-		day += 1
-		if day > 30:
-			day = 1
-			month += 1
-			if month > 12:
-				month = 0
-				year += 1
+	weather_state.hour += 1
+	if weather_state.hour > 23:
+		weather_state.hour = 0
+		weather_state.day += 1
+		if weather_state.day > 30:
+			weather_state.day = 1
+			weather_state.month += 1
+			if weather_state.month > 12:
+				weather_state.month = 0
+				weather_state.year += 1
 	
-	print("New hour started: ", hour)
-	AlgorithmManager.update_grid()
-	UI.update_time_weather(hour, day, month, year, 1000, 15.6)
+	print("New hour started: ", weather_state.hour)
+	algorithm_manager_ref.update_grid()
+	ui_ref.update_time_weather(weather_state)
 	
 	if randf() <= appearance_chance:
 		spawn_consumer()
@@ -49,7 +48,7 @@ func spawn_consumer() -> void:
 	
 	var pos: Vector2i = snapped(Vector2i(randi_range(100,1820), randi_range(100,980)), BuildingManager.blg_grid_size)
 	var type = [AlgorithmManager.RESIDENTIAL, AlgorithmManager.INDUSTRIAL].pick_random()
-	var id: int = AlgorithmManager.add_node(pos, type, "name", 1.0)
+	var id: int = algorithm_manager_ref.add_node(pos, type, "name", 1.0)
 	
 	# Si recibimos un -1, es que la posición está ocupada, volvemos a intentarlo
 	# Limitamos el número de intentos para evitar crashear si no quedan huecos libres.

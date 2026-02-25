@@ -22,7 +22,6 @@ var flow: float
 
 func _ready() -> void:
 	## Initial configuration	
-	AlgorithmManager.grid_state_updated.connect(on_grid_state_updated)
 	apply_shader_and_theme()
 	#add_child(flow_label)
 
@@ -34,9 +33,9 @@ func _process(delta: float) -> void:
 	material.set_shader_parameter("flow_offset", current_flow_offset)
 
 
-func update_capacity() -> void:
+func update_capacity() -> int:
 	## TODO: Implementar outages, reducciones de capacidad, etc
-	AlgorithmManager.Solver.set_connection_capacity(id_a, id_b, capacity)
+	return capacity
 
 func on_grid_state_updated(solver_state: mod_AStar2D) -> void:
 	flow = solver_state.net_flows[id]

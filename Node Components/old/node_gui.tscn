@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://be2i477khatdn"]
 
-[ext_resource type="Script" uid="uid://hqd0kbc62dcj" path="res://Node Components/node_gui.gd" id="1_xj4pt"]
+[ext_resource type="Script" uid="uid://hqd0kbc62dcj" path="res://Node Components/old/node_gui.gd" id="1_xj4pt"]
 [ext_resource type="Texture2D" uid="uid://dar36cotu7ura" path="res://Assets/spritesheet.svg" id="2_le53u"]
 
 [node name="NodeGUI" type="Control"]

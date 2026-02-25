@@ -1,3 +1,4 @@
+class_name BuildingManager
 extends Node2D
 
 enum states {IDLE, NODE_PREVIEW, LINE_PREVIEW}
@@ -6,25 +7,28 @@ enum states {IDLE, NODE_PREVIEW, LINE_PREVIEW}
 #                      VIRT    SOLAR  WIND   HYDRO THERMAL  IND   RES
 var weights: Array = [5.000, 1.001, 1.002, 1.005, 1.012, 1.000, 1.000]
 
-var UI: Control
+
 var state: int = states.IDLE
+var ui_ref: Control
+var algorithm_manager_ref: AlgorithmManager
 
 var previewing_type: int = 0
 var connecting_node: GridNode
 var city_names = ["Madrid", "Barcelona", "Sevilla", "Valencia"]
 
-var blg_grid_size: Vector2i = Vector2i(32,32)
+static var blg_grid_size: Vector2i = Vector2i(32,32)
 var blg_grid: AStarGrid2D = AStarGrid2D.new()
 
 
 func _ready() -> void:
+	Events.node_clicked.connect(on_node_selected)
 	initialize_blg_grid()
 
 func _process(delta: float) -> void:
 	if state == states.NODE_PREVIEW:
-		UI.preview_sprite.global_position = snapped(get_global_mouse_position(), Vector2(blg_grid_size))
+		ui_ref.preview_sprite.global_position = snapped(get_global_mouse_position(), Vector2(blg_grid_size))
 	elif state == states.LINE_PREVIEW:
-		UI.preview_line.points[1] = get_global_mouse_position()
+		ui_ref.preview_line.points[1] = get_global_mouse_position()
 
 
 func initialize_blg_grid() -> void:
@@ -50,7 +54,7 @@ func left_click(pos: Vector2) -> void:
 	var snapped_pos: Vector2i
 	if state == states.NODE_PREVIEW:
 		snapped_pos = snapped(pos, Vector2(blg_grid_size))
-		id = AlgorithmManager.add_node(snapped_pos, previewing_type, city_names.pick_random(), weights[previewing_type])
+		id = algorithm_manager_ref.add_node(snapped_pos, previewing_type, city_names.pick_random(), weights[previewing_type])
 	
 	# Si recibimos un -1, es que la posición está ocupada
 	if id == -1:
@@ -71,34 +75,34 @@ func left_click(pos: Vector2) -> void:
 func right_click() -> void:
 	idle()
 
-func node_selected(node: GridNode) -> void:
+func on_node_selected(node: GridNode) -> void:
 	if state == states.IDLE or state == states.NODE_PREVIEW:
 		line_preview(node.global_position)
 		connecting_node = node
 	elif state == states.LINE_PREVIEW:
 		if node != connecting_node:
-			AlgorithmManager.connect_nodes(connecting_node.id, node.id, 10.0)
+			algorithm_manager_ref.connect_nodes(connecting_node.id, node.id, 10.0)
 			connecting_node = null
 			idle()
 
 
 func idle() -> void:
 	state = states.IDLE
-	UI.preview_sprite.hide()
-	UI.preview_line.hide()
+	ui_ref.preview_sprite.hide()
+	ui_ref.preview_line.hide()
 
 func node_preview() -> void:
 	state = states.NODE_PREVIEW
 	
-	UI.preview_sprite.show()
-	UI.preview_line.hide()
+	ui_ref.preview_sprite.show()
+	ui_ref.preview_line.hide()
 
 func line_preview(pos: Vector2) -> void:
 	state = states.LINE_PREVIEW
 	
-	UI.preview_sprite.hide()
-	UI.preview_line.show()
-	UI.preview_line.points[0] = pos
+	ui_ref.preview_sprite.hide()
+	ui_ref.preview_line.show()
+	ui_ref.preview_line.points[0] = pos
 
 
 # Esta es la función mágica que encuentra el camino y "ocupa" el espacio

@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://q3cuo7c6ci7c"]
+
+[ext_resource type="Script" uid="uid://sr4amshoxu6q" path="res://Game/game.gd" id="1_1r4le"]
+[ext_resource type="PackedScene" uid="uid://obvu4e5vhhgp" path="res://Game/ui.tscn" id="2_7raqb"]
+[ext_resource type="Script" uid="uid://0hfdijh4um1g" path="res://Core/building_manager.gd" id="2_fwxkx"]
+[ext_resource type="Script" uid="uid://caufwmn8fxjcu" path="res://Core/game_coordinator.gd" id="3_qmv3x"]
+[ext_resource type="Script" uid="uid://drgomuoyq12p4" path="res://Core/algorithm_manager.gd" id="5_oomkl"]
+
+[node name="Game" type="Node2D"]
+z_index = -10
+script = ExtResource("1_1r4le")
+
+[node name="BuildingManager" type="Node2D" parent="."]
+script = ExtResource("2_fwxkx")
+metadata/_custom_type_script = "uid://0hfdijh4um1g"
+
+[node name="GameCoordinator" type="Node2D" parent="."]
+script = ExtResource("3_qmv3x")
+metadata/_custom_type_script = "uid://caufwmn8fxjcu"
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="CanvasLayer" instance=ExtResource("2_7raqb")]
+
+[node name="AlgorithmManager" type="Node2D" parent="."]
+script = ExtResource("5_oomkl")
+metadata/_custom_type_script = "uid://drgomuoyq12p4"
+
+[node name="NodesContainer" type="Node2D" parent="AlgorithmManager"]
+z_as_relative = false
+
+[node name="LinesContainer" type="Node2D" parent="AlgorithmManager"]
+z_as_relative = false

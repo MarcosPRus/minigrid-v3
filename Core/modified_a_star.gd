@@ -195,5 +195,5 @@ func set_connection_capacity(id_a: int, id_b: int, new_cap: int) -> void:
 	# TODO: Tiene que haber una mejor forma de hacer esto
 	if Caps.has(line_id_1):
 		Caps[line_id_1] = new_cap
-	elif Caps_copy.has(line_id_2):
+	elif Caps.has(line_id_2):
 		Caps[line_id_2] = new_cap

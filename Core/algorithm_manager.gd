@@ -1,3 +1,4 @@
+class_name AlgorithmManager
 extends Node2D
 
 signal grid_state_updated(solver_state: mod_AStar2D)
@@ -5,9 +6,11 @@ signal grid_state_updated(solver_state: mod_AStar2D)
 enum {SS, SC}
 enum {VIRTUAL, SOLAR, WIND, HYDRO, THERMAL, INDUSTRIAL, RESIDENTIAL}
 
-var NodesContainer: Node2D
-var LinesContainer: Node2D
+@onready var NodesContainer: Node2D = $NodesContainer
+@onready var LinesContainer: Node2D = $LinesContainer
 var Solver: mod_AStar2D
+var building_manager_ref: BuildingManager
+var game_coordinator_ref: GameCoordinator
 
 var nodes: Dictionary[int, GridNode] = {}
 var lines: Dictionary[String, GridLine] = {}
@@ -60,6 +63,9 @@ func add_node(pos: Vector2i, type: int, name_:String, weight: float = 1.0) -> in
 func save_node(new_node_id: int, pos: Vector2, type: int, name_:String) -> void:
 	# Creamos la instancia del nodo, y la añadimos al diccionario de nodos
 	var new_node: GridNode = GridNode.add_node_scene(new_node_id, pos, type, name_)
+	
+	if type != VIRTUAL: grid_state_updated.connect(new_node.on_grid_state_updated)
+	
 	NodesContainer.add_child(new_node)
 	nodes[new_node_id] = new_node
 	print("[AlgorithmManager Debug] New node (", str(new_node_id), ") saved!: ", str(new_node), "  at ", str(pos))
@@ -89,7 +95,7 @@ func save_line(new_line_id: String, id_a: int, id_b: int, capacity: float) -> vo
 	var start_pos = nodes[id_a].global_position
 	var end_pos = nodes[id_b].global_position
 	# Obtenemos el camino visual esquivando obstáculos
-	var visual_path = BuildingManager.get_line_path(start_pos, end_pos)
+	var visual_path = building_manager_ref.get_line_path(start_pos, end_pos)
 	new_line.points = visual_path # Asignamos los puntos a la Line2D
 	
 	new_line.id = new_line_id
@@ -100,14 +106,17 @@ func save_line(new_line_id: String, id_a: int, id_b: int, capacity: float) -> vo
 	new_line.capacity = capacity
 	LinesContainer.add_child(new_line)
 	
+	grid_state_updated.connect(new_line.on_grid_state_updated)
+	
 	lines[new_line_id] = new_line
 
-func update_generator_capacity(node_id: int, new_cap: int, new_cost: float) -> void:
+func update_generator_capacity(node_id: int, new_cap: int) -> void:
 	# Un generador modifica su capacidad máxima de generación
 	# modificando la capacidad de la línea que conecta el SS con el generador virtual
 	Solver.set_connection_capacity(SS, node_id-1, new_cap)
 	# Y también su coste (Peso del nodo virtual)
-	Solver.set_point_weight_scale(node_id - 1, new_cost) # El nodo generador virtual siempre tiene el id del generador -1
+	## TODO: Implementar cambios de coste de generadores
+	Solver.set_point_weight_scale(node_id - 1, 1.0) # El nodo generador virtual siempre tiene el id del generador -1
 
 
 func update_consumer_capacity(node_id: int, new_demand: int) -> void:
@@ -118,13 +127,21 @@ func update_consumer_capacity(node_id: int, new_demand: int) -> void:
 
 func update_grid() -> void:
 	for l in lines.values():
-		l.update_capacity()
+		var aux_cap: int = l.update_capacity()
+		Solver.set_connection_capacity(l.id_a, l.id_b, aux_cap)
 	
 	# TODO: Cambiar esto a ejecución por grupos, primero los consumidores,
 	# luego los generadores inflexibles, luego los generadores flexibles,
 	# y por último el almacenamiento.
 	for n in nodes.values():
-		n.update_capacity()
+		var aux_cap: int = n.update_capacity(game_coordinator_ref.weather_state)
+		
+		if n.is_virtual:
+			pass
+		elif n.is_generator:
+			update_generator_capacity(n.id, aux_cap)
+		else:
+			update_consumer_capacity(n.id, aux_cap)
 	
 	final_flows = Solver.solve()
 	
@@ -159,13 +176,13 @@ func is_position_occupied(target_pos: Vector2i, node_radius: float = 96.0, line_
 	
 	## Comprobación de líneas
 	# Convertimos la posición de mundo a la celda central de la rejilla visual
-	var center_id = Vector2i(target_pos / BuildingManager.blg_grid_size)
+	var center_id = Vector2i(target_pos / building_manager_ref.blg_grid_size)
 	# Escaneamos el área que ocupará el nodo
 	for x in range(-line_radius, line_radius+1):
 		for y in range(-line_radius, line_radius+1):
 			var cell = center_id + Vector2i(x, y)
 			# CHECK CLAVE:
 			# Si es sólido, o tiene mucho peso, hay un edificio.
-			if BuildingManager.blg_grid.get_point_weight_scale(cell) >= 5.0 or BuildingManager.blg_grid.is_point_solid(cell):
+			if building_manager_ref.blg_grid.get_point_weight_scale(cell) >= 5.0 or building_manager_ref.blg_grid.is_point_solid(cell):
 				return true
 	return false
